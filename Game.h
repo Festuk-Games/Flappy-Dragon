@@ -52,4 +52,6 @@ private:
 	bool GameState;
 
 	Entity Player, Shots[MAX_SHOTS], Scene;
+
+
 };

@@ -8,7 +8,7 @@ Game::Game() {
 	Renderer = NULL;
 	GameState = false;
 	//sprite dimension
-	p.setSource(0,0,100,100);
+	p.setSource(0,0,217,218);
 	//destination dimension
 	p.setDest(100, 200, 100, 100);
 }
@@ -43,7 +43,7 @@ bool Game::Init()
 	else
 	{
 		GameState = true;
-		p.CreateTexture("spaceship.png", Renderer);
+		p.CreateTexture("dragon.png", Renderer);
 		b.CreateTexture("background.png", Renderer);
 	}
 	//Initialize keys array
@@ -102,31 +102,41 @@ void Game::Release()
 }
 bool Game::Input()
 {
+	p.GetJumpTime();
 	SDL_Event event;
-	if (SDL_PollEvent(&event))
+	SDL_PollEvent(&event);
+		
+	if (event.type == SDL_QUIT)
 	{
-		if (event.type == SDL_QUIT)
+		GameState = false;
+		return false;
+	}
+	/*if (event.type == SDL_MOUSEMOTION)
+	{
+		cout << event.motion.x << "  " << event.motion.y << endl;
+	}
+	if (event.type == SDL_MOUSEBUTTONDOWN)
+	{
+		cout << "Pressed" << endl;
+	}*/
+	if (event.type == SDL_KEYDOWN)
+	{
+		if (event.key.keysym.sym == SDLK_SPACE)
 		{
-			GameState = false;
-			return false;
-		}
-		if (event.type == SDL_MOUSEMOTION)
-		{
-			cout << event.motion.x << "  " << event.motion.y << endl;
-		}
-		if (event.type == SDL_MOUSEBUTTONDOWN)
-		{
-			cout << "Pressed" << endl;
-		}
-		if (event.type == SDL_KEYDOWN)
-		{
-			if (event.key.keysym.sym == SDLK_UP)
+			if (!p.JumpState())
 			{
-				cout << "Pressed" << endl;
+				p.Jump();
+			}
+			else
+			{
+				p.Gravity();
 			}
 		}
-			
 	}
+	else
+	{
+		p.Gravity();
+	}			
 
 	SDL_PumpEvents();
 	const Uint8* keyboard = SDL_GetKeyboardState(NULL);
@@ -168,7 +178,6 @@ bool Game::Update()
 		idx_shot %= MAX_SHOTS;
 	}
 
-
 	//Logic
 	//Scene scroll
 	Scene.Move(-1, 0);
@@ -176,15 +185,15 @@ bool Game::Update()
 	//Player update
 	Player.Move(fx, fy);
 	//Shots update
-	for (int i = 0; i < MAX_SHOTS; ++i)
+	/*for (int i = 0; i < MAX_SHOTS; ++i)
 	{
 		if (Shots[i].IsAlive())
 		{
 			Shots[i].Move(1, 0);
 			if (Shots[i].GetX() > WINDOW_WIDTH)	Shots[i].ShutDown();
 		}
-	}
-		
+	}*/
+	
 	return false;
 }
 
