@@ -1,8 +1,23 @@
 #include "Game.h"
 #include <math.h>
+#include <iostream>
+using namespace std;
 
-Game::Game() {}
+Game::Game() {
+	Window = NULL;
+	Renderer = NULL;
+	GameState = false;
+	//sprite dimension
+	p.setSource(0,0,100,100);
+	//destination dimension
+	p.setDest(100, 200, 100, 100);
+}
 Game::~Game(){}
+
+bool Game::getGameState()
+{
+	return  GameState;
+}
 
 bool Game::Init()
 {
@@ -12,7 +27,7 @@ bool Game::Init()
 		return false;
 	}
 	//Create our window: title, x, y, w, h, flags
-	Window = SDL_CreateWindow("Spaceship: arrow keys + space, f1: god mode", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	Window = SDL_CreateWindow("Flappy Dragon", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 	if (Window == NULL)
 	{
 		SDL_Log("Unable to create window: %s", SDL_GetError());
@@ -24,6 +39,12 @@ bool Game::Init()
 	{
 		SDL_Log("Unable to create rendering context: %s", SDL_GetError());
 		return false;
+	}
+	else
+	{
+		GameState = true;
+		p.CreateTexture("spaceship.png", Renderer);
+		b.CreateTexture("background.png", Renderer);
 	}
 	//Initialize keys array
 	for (int i = 0; i < MAX_KEYS; ++i)
@@ -46,7 +67,7 @@ bool Game::Init()
 }
 bool Game::LoadImages()
 {
-	if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
+	/*if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
 	{
 		SDL_Log("IMG_Init, failed to init required png support: %s\n", IMG_GetError());
 		return false;
@@ -65,7 +86,7 @@ bool Game::LoadImages()
 	if (img_shot == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
-	}
+	}*/
 	return true;
 }
 void Game::Release()
@@ -84,7 +105,27 @@ bool Game::Input()
 	SDL_Event event;
 	if (SDL_PollEvent(&event))
 	{
-		if (event.type == SDL_QUIT)	return false;
+		if (event.type == SDL_QUIT)
+		{
+			GameState = false;
+			return false;
+		}
+		if (event.type == SDL_MOUSEMOTION)
+		{
+			cout << event.motion.x << "  " << event.motion.y << endl;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			cout << "Pressed" << endl;
+		}
+		if (event.type == SDL_KEYDOWN)
+		{
+			if (event.key.keysym.sym == SDLK_UP)
+			{
+				cout << "Pressed" << endl;
+			}
+		}
+			
 	}
 
 	SDL_PumpEvents();
@@ -103,6 +144,7 @@ bool Game::Update()
 {
 	//Read Input
 	if (!Input())	return true;
+
 
 	//Process Input
 	int fx = 0, fy = 0;
@@ -126,6 +168,7 @@ bool Game::Update()
 		idx_shot %= MAX_SHOTS;
 	}
 
+
 	//Logic
 	//Scene scroll
 	Scene.Move(-1, 0);
@@ -144,6 +187,7 @@ bool Game::Update()
 		
 	return false;
 }
+
 void Game::Draw()
 {
 	SDL_Rect rc;
@@ -152,6 +196,9 @@ void Game::Draw()
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
+	b.Render(Renderer);
+	p.Render(Renderer);
+	
 
 	//God mode uses red wireframe rectangles for physical objects
 	if (god_mode) SDL_SetRenderDrawColor(Renderer, 192, 0, 0, 255);

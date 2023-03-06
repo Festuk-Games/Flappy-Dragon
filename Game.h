@@ -5,8 +5,9 @@
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 #pragma comment( lib, "SDL_image/libx86/SDL2_image.lib" )
-
-
+#include "TextureManager.h"
+#include "Player.h"
+#include "Background.h"
 #include "Entity.h"
 
 #define WINDOW_WIDTH	1024
@@ -28,16 +29,27 @@ public:
 	bool Update();
 	void Draw();
 
+
+	void Event();
+	bool getGameState();
+
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_player, *img_shot;
-
-	Entity Player, Shots[MAX_SHOTS], Scene;
+	SDL_Texture *img_background, *img_player, *img_shot, *player, *background;
+	
+	
 	int idx_shot;
 
 	bool god_mode;
 
 	enum KEY_STATE { KEY_IDLE, KEY_DOWN, KEY_REPEAT, KEY_UP	};
 	KEY_STATE keys[MAX_KEYS]; 
+
+	Player p;
+	Background b;
+	SDL_Event event1;
+	bool GameState;
+
+	Entity Player, Shots[MAX_SHOTS], Scene;
 };
