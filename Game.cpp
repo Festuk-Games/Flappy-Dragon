@@ -44,7 +44,6 @@ bool Game::Init()
 	{
 		GameState = true;
 		p.CreateTexture("dragon.png", Renderer);
-		b.CreateTexture("background.png", Renderer);
 	}
 	//Initialize keys array
 	for (int i = 0; i < MAX_KEYS; ++i)
@@ -67,7 +66,7 @@ bool Game::Init()
 }
 bool Game::LoadImages()
 {
-	/*if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
+	if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
 	{
 		SDL_Log("IMG_Init, failed to init required png support: %s\n", IMG_GetError());
 		return false;
@@ -77,7 +76,7 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	img_player = SDL_CreateTextureFromSurface(Renderer, IMG_Load("spaceship.png"));
+	/*img_player = SDL_CreateTextureFromSurface(Renderer, IMG_Load("spaceship.png"));
 	if (img_player == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
@@ -205,10 +204,7 @@ void Game::Draw()
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
-	b.Render(Renderer);
-	p.Render(Renderer);
 	
-
 	//God mode uses red wireframe rectangles for physical objects
 	if (god_mode) SDL_SetRenderDrawColor(Renderer, 192, 0, 0, 255);
 
@@ -223,6 +219,8 @@ void Game::Draw()
 	SDL_RenderCopy(Renderer, img_player, NULL, &rc);
 	if (god_mode) SDL_RenderDrawRect(Renderer, &rc);
 	
+	p.Render(Renderer);
+
 	//Draw shots
 	for (int i = 0; i < MAX_SHOTS; ++i)
 	{

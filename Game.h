@@ -47,8 +47,6 @@ private:
 	KEY_STATE keys[MAX_KEYS]; 
 
 	Player p;
-	Background b;
-	SDL_Event event1;
 	bool GameState;
 
 	Entity Player, Shots[MAX_SHOTS], Scene;
