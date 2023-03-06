@@ -62,8 +62,11 @@ bool Game::Init()
 	Scene.Init(0, 0, w, WINDOW_HEIGHT, 4);
 	god_mode = false;
 
+
+
 	return true;
 }
+
 bool Game::LoadImages()
 {
 	if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
@@ -80,12 +83,12 @@ bool Game::LoadImages()
 	if (img_player == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
-	}
+	}*/
 	img_shot = SDL_CreateTextureFromSurface(Renderer, IMG_Load("shot.png"));
 	if (img_shot == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
-	}*/
+	}
 	return true;
 }
 void Game::Release()
@@ -172,9 +175,6 @@ bool Game::Update()
 		Shots[idx_shot].Init(x + 29, y + 3, 56, 20, 10);
 		idx_shot++;
 		idx_shot %= MAX_SHOTS;
-		Shots[idx_shot].Init(x + 29, y + 59, 56, 20, 10);
-		idx_shot++;
-		idx_shot %= MAX_SHOTS;
 	}
 
 	//Logic
@@ -184,14 +184,14 @@ bool Game::Update()
 	//Player update
 	Player.Move(fx, fy);
 	//Shots update
-	/*for (int i = 0; i < MAX_SHOTS; ++i)
+	for (int i = 0; i < MAX_SHOTS; ++i)
 	{
 		if (Shots[i].IsAlive())
 		{
 			Shots[i].Move(1, 0);
 			if (Shots[i].GetX() > WINDOW_WIDTH)	Shots[i].ShutDown();
 		}
-	}*/
+	}
 	
 	return false;
 }
