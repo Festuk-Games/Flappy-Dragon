@@ -29,6 +29,11 @@ void Player::Gravity()
 	}
 }
 
+int Player::Ypo()
+{
+	return Ypos;
+}
+
 void Player::Jump()
 {
 	if (jumpTimer - lastJump > 180)

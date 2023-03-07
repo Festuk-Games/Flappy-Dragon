@@ -17,6 +17,7 @@ public:
 	void Gravity();
 	void GetJumpTime();
 	void Jump();
+	int Ypo();
 	bool JumpState();
 	void Render(SDL_Renderer* ren);
 };

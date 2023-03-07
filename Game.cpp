@@ -44,6 +44,7 @@ bool Game::Init()
 	{
 		GameState = true;
 		p.CreateTexture("dragon.png", Renderer);
+		shot.CreateTexture("shot.png", Renderer);
 	}
 	//Initialize keys array
 	for (int i = 0; i < MAX_KEYS; ++i)
@@ -61,8 +62,6 @@ bool Game::Init()
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
 	Scene.Init(0, 0, w, WINDOW_HEIGHT, 4);
 	god_mode = false;
-
-
 
 	return true;
 }
@@ -157,7 +156,6 @@ bool Game::Update()
 	//Read Input
 	if (!Input())	return true;
 
-
 	//Process Input
 	int fx = 0, fy = 0;
 	if (keys[SDL_SCANCODE_ESCAPE] == KEY_DOWN)	return true;
@@ -166,13 +164,14 @@ bool Game::Update()
 	if (keys[SDL_SCANCODE_DOWN] == KEY_REPEAT)	fy = 1;
 	if (keys[SDL_SCANCODE_LEFT] == KEY_REPEAT)	fx = -1;
 	if (keys[SDL_SCANCODE_RIGHT] == KEY_REPEAT)	fx = 1;
-	if (keys[SDL_SCANCODE_SPACE] == KEY_DOWN)
+	if (keys[SDLK_LCTRL] == KEY_DOWN)
 	{
-		int x, y, w, h;
-		Player.GetRect(&x, &y, &w, &h);
+		/*int x, y, w, h;
+		Player.GetRect(&x, &y, &w, &h);*/
+		int Ypos = p.Ypo();
 		//size: 56x20
 		//offset from player: dx, dy = [(29, 3), (29, 59)]
-		Shots[idx_shot].Init(x + 29, y + 3, 56, 20, 10);
+		Shots[idx_shot].Init(120, Ypos+50, 56, 20, 10);
 		idx_shot++;
 		idx_shot %= MAX_SHOTS;
 	}
@@ -192,7 +191,6 @@ bool Game::Update()
 			if (Shots[i].GetX() > WINDOW_WIDTH)	Shots[i].ShutDown();
 		}
 	}
-	
 	return false;
 }
 
@@ -204,10 +202,6 @@ void Game::Draw()
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
-	
-	//God mode uses red wireframe rectangles for physical objects
-	if (god_mode) SDL_SetRenderDrawColor(Renderer, 192, 0, 0, 255);
-
 	//Draw scene
 	Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
@@ -215,10 +209,6 @@ void Game::Draw()
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 	
 	//Draw player
-	Player.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	SDL_RenderCopy(Renderer, img_player, NULL, &rc);
-	if (god_mode) SDL_RenderDrawRect(Renderer, &rc);
-	
 	p.Render(Renderer);
 
 	//Draw shots
@@ -228,12 +218,11 @@ void Game::Draw()
 		{
 			Shots[i].GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
 			SDL_RenderCopy(Renderer, img_shot, NULL, &rc);
-			if (god_mode) SDL_RenderDrawRect(Renderer, &rc);
+			/*if (god_mode) SDL_RenderDrawRect(Renderer, &rc);*/
 		}
 	}
 
 	//Update screen
 	SDL_RenderPresent(Renderer);
-
 	SDL_Delay(10);	// 1000/10 = 100 fps max
 }

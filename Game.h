@@ -46,7 +46,7 @@ private:
 	enum KEY_STATE { KEY_IDLE, KEY_DOWN, KEY_REPEAT, KEY_UP	};
 	KEY_STATE keys[MAX_KEYS]; 
 
-	Player p;
+	Player p, shot;
 	bool GameState;
 
 	Entity Player, Shots[MAX_SHOTS], Scene;
