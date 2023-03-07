@@ -1,5 +1,6 @@
 #include "Game.h"
 
+
 int main(int argc, char* args[])
 {
 	double first, last = 0;
@@ -7,17 +8,34 @@ int main(int argc, char* args[])
 	Game game;
 	if (!game.Init()) return -1;
 
-	bool end = false;
-	while (!end)
+	while (!game.gameReady)
 	{
-		end = game.Update();
-		game.Draw();
-		/*first = SDL_GetTicks();
-		if (first - last < 16.7)
+		game.gameReady = game.Update();
+		game.OpenMenu();
+
+		if (game.gameReady)
 		{
-			SDL_Delay(16.7 - (first - last));
+			game.play = false;
+			break;
 		}
-		last = first;*/
+	
+	}
+	while (!game.play)
+	{
+		game.gameReady = game.Update();
+		game.Draw();
+	}
+	
+
+	/*while (!game.gameReady)
+	{
+		game.gameReady = game.Update();
+		game.Draw();
+	}*/
+	while (!game.end)
+	{
+		game.end = game.Update();
+		game.Draw();
 	}
 
 	game.Release();

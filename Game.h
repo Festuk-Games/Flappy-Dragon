@@ -33,10 +33,18 @@ public:
 	void Event();
 	bool getGameState();
 
+
+	void OpenMenu();
+	bool end = false;
+	bool gameReady = false;
+	bool play = true;
+	bool player = true;
+
+
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_player, *img_shot, *player, *background;
+	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu;
 	
 	
 	int idx_shot;
@@ -49,7 +57,6 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene;
-
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu;
 
 };
