@@ -5,10 +5,14 @@
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 #pragma comment( lib, "SDL_image/libx86/SDL2_image.lib" )
+#include "SDL2_ttf/include/SDL_ttf.h"
+#pragma comment(lib, "SDL2_ttf/lib/x86/SDL2_ttf.lib")
+
 #include "TextureManager.h"
 #include "Player.h"
 #include "Background.h"
 #include "Entity.h"
+#include "Text.h"
 
 #define WINDOW_WIDTH	1920
 #define WINDOW_HEIGHT	1080
@@ -28,7 +32,7 @@ public:
 	bool Input();
 	bool Update();
 	void Draw();
-
+	void Ac(const char* msg, int x, int y, int r, int g, int b, int size);
 
 	void Event();
 	bool getGameState();
@@ -40,12 +44,13 @@ public:
 	bool gameReady = false;
 	bool play = true;
 	bool player = true;
+	int points = 0;
 
 
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu, *endmenu;
+	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu, *endmenu, *tex;
 	
 	
 	int idx_shot;
@@ -60,4 +65,5 @@ private:
 
 	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu;
 
+	Text score;
 };

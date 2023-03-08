@@ -1,7 +1,4 @@
 #include "Player.h"
-#include "Game.h"
-
-Game game;
 
 void Player::Render(SDL_Renderer* ren)
 {

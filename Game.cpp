@@ -10,6 +10,7 @@ Game::Game() {
 	Window = NULL;
 	Renderer = NULL;
 	GameState = false;
+	TTF_Init();
 	//sprite dimension
 	p.setSource(0,0,217,218);
 	//destination dimension
@@ -177,7 +178,6 @@ bool Game::Update()
 {
 	//Read Input
 	if (!Input())	return true;
-
 	//Process Input
 	int fx = 0, fy = 0;
 	if (keys[SDL_SCANCODE_ESCAPE] == KEY_DOWN)	Release();
@@ -188,7 +188,7 @@ bool Game::Update()
 	if (keys[SDL_SCANCODE_RIGHT] == KEY_REPEAT)	fx = 1;
 	if (keys[SDLK_LCTRL] == KEY_DOWN)
 	{
-
+		points += 1;
 		//get player ypos
 		int Ypos = p.Ypo();
 		//size: 56x20
@@ -197,7 +197,7 @@ bool Game::Update()
 		idx_shot++;
 		idx_shot %= MAX_SHOTS;
 	}
-	
+
 	return false;
 }
 
@@ -215,7 +215,6 @@ void Game::OpenMenu()
 	//Update screen
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
-
 	SDL_Event mouse;
 	SDL_PollEvent(&mouse);
 	if (mouse.type == SDL_MOUSEBUTTONDOWN)
@@ -254,10 +253,11 @@ void Game::Draw()
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 	rc.x += rc.w;
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
-	
+
 	//Draw player
 	p.Render(Renderer);
-
+	std::string s = "Score: " + std::to_string(points);
+	Ac(s.c_str(), 20, 30, 0, 255, 0, 50);
 	//Draw shots
 	for (int i = 0; i < MAX_SHOTS; ++i)
 	{
@@ -303,4 +303,26 @@ void Game::OpenEnd()
 			end = true;
 		}
 	}
+}
+
+void Game::Ac(const char* msg, int x, int y, int r, int g, int b, int size) 
+{
+	SDL_Surface* surf;
+	SDL_Texture* tex;
+	TTF_Font *font = TTF_OpenFont("Fonts/calibrib.ttf", size);
+	SDL_Color color;
+	color.r = r;
+	color.g = g;
+	color.b = b;
+	color.a = 255;
+	SDL_Rect rect;
+	surf = TTF_RenderText_Solid(font, msg, color);
+	tex = SDL_CreateTextureFromSurface(Renderer, surf);
+	rect.x = x;
+	rect.y = y;
+	rect.w = surf->w;
+	rect.h = surf->h;
+	SDL_FreeSurface(surf);
+	SDL_RenderCopy(Renderer, tex, NULL, &rect);
+	SDL_DestroyTexture(tex);
 }
