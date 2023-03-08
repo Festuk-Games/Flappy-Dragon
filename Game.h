@@ -10,8 +10,8 @@
 #include "Background.h"
 #include "Entity.h"
 
-#define WINDOW_WIDTH	1024
-#define WINDOW_HEIGHT	768
+#define WINDOW_WIDTH	1920
+#define WINDOW_HEIGHT	1080
 #define MAX_KEYS		256
 #define MAX_SHOTS		32
 
@@ -35,7 +35,8 @@ public:
 
 
 	void OpenMenu();
-	bool end = false;
+	void OpenEnd();
+	bool end = true;
 	bool gameReady = false;
 	bool play = true;
 	bool player = true;
@@ -44,7 +45,7 @@ public:
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu;
+	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu, *endmenu;
 	
 	
 	int idx_shot;
@@ -57,6 +58,6 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu;
 
 };

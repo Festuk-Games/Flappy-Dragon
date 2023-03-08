@@ -1,4 +1,7 @@
 #include "Player.h"
+#include "Game.h"
+
+Game game;
 
 void Player::Render(SDL_Renderer* ren)
 {
@@ -7,13 +10,14 @@ void Player::Render(SDL_Renderer* ren)
 
 void Player::Gravity()
 {
+
 	if (JumpState())
 	{
 		accelerator1 += 0.035;
 		accelerator2 += 0.035;
 		jumpHeight += gravity;
 		Ypos += gravity + accelerator1 + accelerator2 + jumpHeight;
-		setDest(0, Ypos, 217, 218);
+		setDest(200, Ypos, 217, 218);
 		if (jumpHeight > 0)
 		{
 			inJump = false;
@@ -25,13 +29,18 @@ void Player::Gravity()
 		accelerator1 += 0.035;
 		accelerator2 += 0.035;
 		Ypos += gravity + accelerator1 + accelerator2;
-		setDest(0, Ypos, 217, 218);
+		setDest(200, Ypos, 217, 218);
 	}
 }
 
 int Player::Ypo()
 {
 	return Ypos;
+}
+
+int Player::Xpo()
+{
+	return Xpos;
 }
 
 void Player::Jump()

@@ -63,9 +63,11 @@ bool Game::Init()
 	idx_shot = 0;
 	int w;
 	SDL_QueryTexture(menu, NULL, NULL, &w, NULL);
-	Menu.Init(0, 0, w, WINDOW_HEIGHT, 4);
+	Menu.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
+	SDL_QueryTexture(endmenu, NULL, NULL, &w, NULL);
+	EndMenu.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
-	Scene.Init(0, 0, w, WINDOW_HEIGHT, 4);
+	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 
 	return true;
 }
@@ -77,8 +79,13 @@ bool Game::LoadImages()
 		SDL_Log("IMG_Init, failed to init required png support: %s\n", IMG_GetError());
 		return false;
 	}
-	menu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("spaceship.png"));
+	menu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("button.png"));
 	if (menu == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	endmenu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("end.jpg"));
+	if (endmenu == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
@@ -104,7 +111,8 @@ void Game::Release()
 {
 	//Release images
 	SDL_DestroyTexture(img_background);
-	/*SDL_DestroyTexture(menu);*/
+	SDL_DestroyTexture(menu);
+	SDL_DestroyTexture(endmenu);
 	SDL_DestroyTexture(img_player);
 	SDL_DestroyTexture(img_shot);
 	IMG_Quit();
@@ -122,6 +130,7 @@ bool Game::Input()
 	if (event.type == SDL_QUIT)
 	{
 		GameState = false;
+		Release();
 		return false;
 	}
 	if (event.type == SDL_MOUSEMOTION)
@@ -171,7 +180,7 @@ bool Game::Update()
 
 	//Process Input
 	int fx = 0, fy = 0;
-	if (keys[SDL_SCANCODE_ESCAPE] == KEY_DOWN)	return true;
+	if (keys[SDL_SCANCODE_ESCAPE] == KEY_DOWN)	Release();
 	if (keys[SDL_SCANCODE_F1] == KEY_DOWN)		god_mode = !god_mode;
 	if (keys[SDL_SCANCODE_UP] == KEY_REPEAT)	fy = -1;
 	if (keys[SDL_SCANCODE_DOWN] == KEY_REPEAT)	fy = 1;
@@ -180,31 +189,14 @@ bool Game::Update()
 	if (keys[SDLK_LCTRL] == KEY_DOWN)
 	{
 
-		/*int x, y, w, h;
-		Player.GetRect(&x, &y, &w, &h);*/
+		//get player ypos
 		int Ypos = p.Ypo();
 		//size: 56x20
 		//offset from player: dx, dy = [(29, 3), (29, 59)]
-		Shots[idx_shot].Init(120, Ypos+50, 56, 20, 10);
+		Shots[idx_shot].Init(360, Ypos+50, 56, 20, 10);
 		idx_shot++;
 		idx_shot %= MAX_SHOTS;
 	}
-
-		//Logic
-		//Scene scroll
-		/*Scene.Move(-1, 0);
-		if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);*/
-		//Player update
-		/*Player.Move(fx, fy);*/
-		//Shots update
-		/*for (int i = 0; i < MAX_SHOTS; ++i)
-		{
-			if (Shots[i].IsAlive())
-			{
-				Shots[i].Move(1, 0);
-				if (Shots[i].GetX() > WINDOW_WIDTH)	Shots[i].ShutDown();
-			}
-		}*/
 	
 	return false;
 }
@@ -230,13 +222,12 @@ void Game::OpenMenu()
 	{
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		if (x >= 0 && x <= 1024 && y >= 0 && y <= 768) {
+		if (x >= 865 && x <= 1055 && y >= 680 && y <= 760) {
 			gameReady = true;
 		}
 	}
 
 }
-
 
 void Game::Draw()
 {
@@ -274,11 +265,42 @@ void Game::Draw()
 		{
 			Shots[i].GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
 			SDL_RenderCopy(Renderer, img_shot, NULL, &rc);
-			/*if (god_mode) SDL_RenderDrawRect(Renderer, &rc);*/
 		}
+	}
+	int Ypos = p.Ypo();
+	if (Ypos >= 800 || Ypos <= -50)
+	{
+		play = true;
 	}
 
 	//Update screen
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
+}
+
+void Game::OpenEnd()
+{
+
+	SDL_Rect rc;
+	//Set the color used for drawing operations
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	//Clear rendering target
+	SDL_RenderClear(Renderer);
+	//Draw end
+	Menu.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, menu, NULL, &rc);
+	//Update screen
+	SDL_RenderPresent(Renderer);
+	SDL_Delay(10);	// 1000/10 = 100 fps max
+
+	SDL_Event mouse;
+	SDL_PollEvent(&mouse);
+	if (mouse.type == SDL_MOUSEBUTTONDOWN)
+	{
+		int x, y;
+		SDL_GetMouseState(&x, &y);
+		if (x >= 865 && x <= 1055 && y >= 680 && y <= 760) {
+			end = true;
+		}
+	}
 }

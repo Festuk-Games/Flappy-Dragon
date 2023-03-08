@@ -6,6 +6,7 @@ class Player :public Object
 private:
 	double gravity = 0.2;
 	double Ypos = 256;
+	double Xpos;
 	double accelerator1 = 0;
 	double accelerator2 = 0;
 	bool inJump = false;
@@ -18,6 +19,7 @@ public:
 	void GetJumpTime();
 	void Jump();
 	int Ypo();
+	int Xpo();
 	bool JumpState();
 	void Render(SDL_Renderer* ren);
 };

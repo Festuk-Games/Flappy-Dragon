@@ -18,26 +18,30 @@ int main(int argc, char* args[])
 			game.play = false;
 			break;
 		}
-	
+
 	}
 	while (!game.play)
 	{
-		game.gameReady = game.Update();
+		game.play = game.Update();
 		game.Draw();
+		if (game.play)
+		{
+			game.end = false;
+			break;
+		}
 	}
-	
-
-	/*while (!game.gameReady)
-	{
-		game.gameReady = game.Update();
-		game.Draw();
-	}*/
 	while (!game.end)
 	{
 		game.end = game.Update();
-		game.Draw();
-	}
+		game.OpenEnd();
 
+		if (game.end)
+		{
+			game.Release();
+			break;
+		}
+	}
+	
 	game.Release();
 	return 0;
 }
