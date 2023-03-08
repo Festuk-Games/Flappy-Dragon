@@ -36,6 +36,21 @@ void Object::setDest(int x, int y, int w, int h)
 	dest.h = h;
 }
 
+int Object::GetX()
+{
+	return x;
+}
+void Object::SetX(int posx)
+{
+	x = posx;
+}
+
+void Object::Move(int dx, int dy)
+{
+	x += dx;
+	y += dy;
+}
+
 void Object::CreateTexture(const char* adress, SDL_Renderer* ren)
 {
 	Tex = TextureManager::Texture(adress, ren);

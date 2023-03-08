@@ -14,6 +14,8 @@ class Object
 private: 
 	SDL_Rect src, dest;
 	SDL_Texture* Tex;
+	int x, y;
+	int width, height;
 
 public:
 	Object();
@@ -24,4 +26,9 @@ public:
 	SDL_Rect& getDest();
 	void CreateTexture(const char* adress, SDL_Renderer* ren);
 	void virtual Render(SDL_Renderer* ren) = 0;
+
+	void SetX(int posx);
+	int  GetX();
+	int  GetWidth();
+	void Move(int dx, int dy);
 };

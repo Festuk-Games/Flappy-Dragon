@@ -14,6 +14,11 @@ private:
 	double jumpTimer;
 	double lastJump = 0;
 
+	int incY1 = 0;
+	int pipeDistance1 = 400;
+	int x, y;
+	int width, height;
+
 public:
 	void Gravity();
 	void GetJumpTime();
@@ -22,4 +27,9 @@ public:
 	int Xpo();
 	bool JumpState();
 	void Render(SDL_Renderer* ren);
+
+
+	bool PipeUpdate(int incY, int& score);
+	int getPipe1X();
+	int getPipe1Y();
 };

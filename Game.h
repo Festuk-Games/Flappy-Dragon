@@ -13,6 +13,8 @@
 #include "Background.h"
 #include "Entity.h"
 #include "Text.h"
+#include"Collision.h"
+#include"Object.h"
 
 #define WINDOW_WIDTH	1920
 #define WINDOW_HEIGHT	1080
@@ -46,6 +48,7 @@ public:
 	bool player = true;
 	int points = 0;
 
+	static bool CheckCollision(SDL_Rect* A, SDL_Rect* B);
 
 private:
 	SDL_Window *Window;
@@ -63,7 +66,7 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, Pipe;
 
 	Text score;
 };

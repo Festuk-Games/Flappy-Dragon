@@ -13,8 +13,10 @@ Game::Game() {
 	TTF_Init();
 	//sprite dimension
 	p.setSource(0,0,217,218);
+	//Pipe.setSource(0, 0, 217, 218);
 	//destination dimension
 	p.setDest(100, 200, 100, 100);
+	//Pipe.setDest(100, 200, 400, 400);
 }
 Game::~Game(){}
 
@@ -47,6 +49,7 @@ bool Game::Init()
 	else
 	{
 		GameState = true;
+	/*	Pipe.CreateTexture("spaceship.png", Renderer);*/
 		p.CreateTexture("dragon.png", Renderer);
 		shot.CreateTexture("shot.png", Renderer);
 	}
@@ -69,6 +72,8 @@ bool Game::Init()
 	EndMenu.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
 	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
+	SDL_QueryTexture(img_player, NULL, NULL, &w, NULL);
+	Pipe.Init(500, 500, 52, 600, 4);
 
 	return true;
 }
@@ -90,16 +95,16 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("background.png"));
+	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("fondo.png"));
 	if (img_background == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	/*img_player = SDL_CreateTextureFromSurface(Renderer, IMG_Load("spaceship.png"));
+	img_player = SDL_CreateTextureFromSurface(Renderer, IMG_Load("pipe.png"));
 	if (img_player == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
-	}*/
+	}
 	img_shot = SDL_CreateTextureFromSurface(Renderer, IMG_Load("shot.png"));
 	if (img_shot == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
@@ -197,9 +202,35 @@ bool Game::Update()
 		idx_shot++;
 		idx_shot %= MAX_SHOTS;
 	}
+	/*p.Xpo() >= Pipe.Xpo() && p.Xpo() <= Pipe.Xpo()*/
+	SDL_Rect pos;
+
+	
+	//if (p.Ypo() <= Pipe.Ypo() && p.getDest() >= Pipe.getDest())
+	//{
+	//	points++;
+	//}
 
 	return false;
+
 }
+
+
+//void Game::CollisionDetection()
+//{
+//	/*if (Collision::CheckCollision(&p.getDest(), &Pipe.getDest()))
+//	{
+//		points += 1;
+//	}*/
+//	//else if (Collision::CheckCollision(&p.getDest(), &ground1.getDest()) || CollisionManager::CheckCollision(&p.getDest(), &ground2.getDest()) || p.getYpos() < 0)
+//	//{
+//	//	SDL_Delay(500);
+//	//	list.Insert(points, generations);
+//	//	generations++;
+//	//	neuralNetwork.SaveProgress("Progress.txt", generations);
+//	//	Reset();
+//	//}
+//}
 
 
 void Game::OpenMenu()
@@ -228,11 +259,25 @@ void Game::OpenMenu()
 
 }
 
+bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
+{
+	SDL_bool Collision = SDL_HasIntersection(A, B);
+	if (Collision)
+	{
+		return true;
+	}
+	else
+		return false;
+}
+
 void Game::Draw()
 {
 	p.Gravity();
 	Scene.Move(-1, 0);
 	if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);
+	Pipe.Move(-1, 0);
+	if (Pipe.GetX() <= -Pipe.GetWidth())	Pipe.SetX(2000);
+
 	SDL_Rect rc;
 
 	for (int i = 0; i < MAX_SHOTS; ++i)
@@ -243,7 +288,7 @@ void Game::Draw()
 			if (Shots[i].GetX() > WINDOW_WIDTH)	Shots[i].ShutDown();
 		}
 	}
-
+	
 	//Set the color used for drawing operations
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	//Clear rendering target
@@ -254,10 +299,23 @@ void Game::Draw()
 	rc.x += rc.w;
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 
+	Pipe.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, img_player, NULL, &rc);
+
+	//Pipe.Render(Renderer);
+	SDL_bool collision = SDL_HasIntersection(&p.getDest(), &rc);
+	if (collision)
+	{
+		points++;
+	}
+
 	//Draw player
 	p.Render(Renderer);
+	//CheckCollision(&p.getDest(), &Pipe.getDest());
 	std::string s = "Score: " + std::to_string(points);
 	Ac(s.c_str(), 20, 30, 0, 255, 0, 50);
+
+
 	//Draw shots
 	for (int i = 0; i < MAX_SHOTS; ++i)
 	{
@@ -272,6 +330,7 @@ void Game::Draw()
 	{
 		play = true;
 	}
+
 
 	//Update screen
 	SDL_RenderPresent(Renderer);

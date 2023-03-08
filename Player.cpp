@@ -40,6 +40,7 @@ int Player::Xpo()
 	return Xpos;
 }
 
+
 void Player::Jump()
 {
 	if (jumpTimer - lastJump > 180)
@@ -64,3 +65,7 @@ bool Player::JumpState()
 {
 	return inJump;
 }
+
+
+
+
