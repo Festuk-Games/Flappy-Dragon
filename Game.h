@@ -37,7 +37,7 @@ public:
 	bool Input();
 	bool Update();
 	void Draw();
-	void Text(const char* msg, int x, int y, int r, int g, int b, int size);
+	void Text(const char* msg, int x, int y, int r, int g, int b);
 
 	void Event();
 	bool getGameState();
@@ -47,7 +47,7 @@ public:
 	void OpenMenu();
 	void OpenEnd();
 	bool end = true;
-	bool gameReady = false;
+	bool gameReady = false; 
 	bool play = true;
 	bool player = true;
 	int points = 0;
@@ -72,6 +72,8 @@ private:
 
 	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3;
 
+
+	TTF_Font* font;
 	/*Text score;*/
 
 };

@@ -86,6 +86,7 @@ bool Game::Init()
 	TowD1.Init(500, 600, 100, 600, 4);
 	TowD2.Init(1100, 600, 100, 600, 4);
 	TowD3.Init(1750, 650, 100, 600, 4);
+	font = TTF_OpenFont("Fonts/calibrib.ttf", 32);
 	return true;
 }
 
@@ -381,7 +382,7 @@ void Game::Draw()
 	p.Render(Renderer);
 	//CheckCollision(&p.getDest(), &Pipe.getDest());
 	std::string s = "Score: " + std::to_string(points);
-	Text(s.c_str(), 20, 30, 0, 255, 0, 50);
+	Text(s.c_str(), 20, 30, 0, 255, 0);
 
 
 	//Draw shots
@@ -432,11 +433,10 @@ void Game::OpenEnd()
 	}
 }
 
-void Game::Text(const char* msg, int x, int y, int r, int g, int b, int size) 
+void Game::Text(const char* msg, int x, int y, int r, int g, int b) 
 {
 	SDL_Surface* surf;
 	SDL_Texture* tex;
-	TTF_Font *font = TTF_OpenFont("Fonts/calibrib.ttf", size);
 	SDL_Color color;
 	color.r = r;
 	color.g = g;
