@@ -59,6 +59,7 @@ public:
 	int posYD1 = 0;
 	int posYD2 = 0;
 	int posYD3 = 0;
+	bool dead = false;
 
 private:
 	SDL_Window *Window;

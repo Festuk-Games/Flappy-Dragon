@@ -65,6 +65,7 @@ bool Game::Init()
 		p.CreateTexture("dragon1.png", Renderer);
 		p.CreateTexture1("dragon2.png", Renderer);
 		p.CreateTexture2("dragon3.png", Renderer);
+		p.CreateTexture3("dragon4.png", Renderer);
 		shot.CreateTexture("shot.png", Renderer);
 	}
 	//Initialize keys array
@@ -205,9 +206,16 @@ bool Game::Input()
 	{
 		if (event.key.keysym.sym == SDLK_SPACE)
 		{
-			if (!p.JumpState())
+			if (!dead)
 			{
-				p.Jump();
+				if (!p.JumpState())
+				{
+					p.Jump();
+				}
+				else
+				{
+					p.Gravity();
+				}
 			}
 			else
 			{
@@ -389,19 +397,19 @@ void Game::Draw()
 	if (TowU1.GetX() <= -TowU1.GetWidth())
 	{
 		TowU1.SetX(1920);
-		TowU1.SetY(posYD1 - 1000);
+		TowU1.SetY(posYD1 - 950);
 	}
 	TowU2.Move(-1, 0);
 	if (TowU2.GetX() <= -TowU2.GetWidth())
 	{
 		TowU2.SetX(1920);
-		TowU2.SetY(posYD2 - 1000);
+		TowU2.SetY(posYD2 - 950);
 	}
 	TowU3.Move(-1, 0);
 	if (TowU3.GetX() <= -TowU3.GetWidth())
 	{
 		TowU3.SetX(1920);
-		TowU3.SetY(posYD3 - 1000);
+		TowU3.SetY(posYD3 - 950);
 
 	}
 	SDL_Rect rc;
@@ -445,8 +453,14 @@ void Game::Draw()
 	SDL_RenderCopy(Renderer, towu, NULL, &u3);
 
 	//Draw player
-	p.Render(Renderer);
-
+	if (!dead)
+	{
+		p.Render(Renderer);
+	}
+	else
+	{
+		p.RenderDead(Renderer);
+	}
 	SDL_bool collisionD1 = SDL_HasIntersection(&p.getDest(), &d1);
 	SDL_bool collisionD2 = SDL_HasIntersection(&p.getDest(), &d2);
 	SDL_bool collisionD3 = SDL_HasIntersection(&p.getDest(), &d3);
@@ -455,7 +469,8 @@ void Game::Draw()
 	SDL_bool collisionU3 = SDL_HasIntersection(&p.getDest(), &u3);
 	if (collisionD1 ||collisionD2 || collisionD3 || collisionU1 || collisionU2 || collisionU3)
 	{
-		play = true;
+		dead = true;
+	/*	play = true;*/
 	}
 	time3++;
 	if (time3 >= 50)

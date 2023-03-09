@@ -1,7 +1,11 @@
 #include "Player.h"
+#include "Game.h"
+
+Game game;
 
 void Player::Render(SDL_Renderer* ren)
 {
+
 	animationTimer++;
 	if (animationTimer < 16)
 	{
@@ -23,6 +27,12 @@ void Player::Render(SDL_Renderer* ren)
 	{
 		animationTimer = 0;
 	}
+	
+}
+
+void Player::RenderDead(SDL_Renderer* ren)
+{
+	SDL_RenderCopyEx(ren, Tex3, &getSrc(), &getDest(), 0, NULL, SDL_FLIP_NONE);
 }
 
 void Player::Gravity()
@@ -95,5 +105,10 @@ void Player::CreateTexture1(const char* address, SDL_Renderer* ren)
 void Player::CreateTexture2(const char* address, SDL_Renderer* ren)
 {
 	Tex2 = TextureManager::Texture(address, ren);
+}
+
+void Player::CreateTexture3(const char* address, SDL_Renderer* ren)
+{
+	Tex3 = TextureManager::Texture(address, ren);
 }
 
