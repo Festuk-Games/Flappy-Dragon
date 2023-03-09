@@ -11,11 +11,15 @@ void Player::Render(SDL_Renderer* ren)
 	{
 		SDL_RenderCopyEx(ren, Tex1, &getSrc(), &getDest(), 0, NULL, SDL_FLIP_NONE);
 	}
-	else if (animationTimer > 32)
+	else if (animationTimer >= 32 && animationTimer <= 48)
 	{
 		SDL_RenderCopyEx(ren, Tex2, &getSrc(), &getDest(), 0, NULL, SDL_FLIP_NONE);
 	}
-	if (animationTimer > 48)
+	else if (animationTimer > 48)
+	{
+		SDL_RenderCopyEx(ren, Tex1, &getSrc(), &getDest(), 0, NULL, SDL_FLIP_NONE);
+	}
+	if (animationTimer > 54)
 	{
 		animationTimer = 0;
 	}
@@ -30,7 +34,7 @@ void Player::Gravity()
 		accelerator2 += 0.035;
 		jumpHeight += gravity;
 		Ypos += gravity + accelerator1 + accelerator2 + jumpHeight;
-		setDest(200, Ypos, 217, 218);
+		setDest(200, Ypos, 60*3, 46 * 3);
 		if (jumpHeight > 0)
 		{
 			inJump = false;
@@ -42,7 +46,7 @@ void Player::Gravity()
 		accelerator1 += 0.035;
 		accelerator2 += 0.035;
 		Ypos += gravity + accelerator1 + accelerator2;
-		setDest(200, Ypos, 217, 218);
+		setDest(200, Ypos, 60*3, 46*3);
 	}
 }
 

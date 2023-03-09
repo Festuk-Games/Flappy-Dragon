@@ -1,6 +1,8 @@
 #include "Game.h"
 #include <math.h>
 #include <iostream>
+#include <cstdlib>
+#include <time.h>
 #define OGG_MUSIC
 
 using namespace std;
@@ -14,12 +16,14 @@ Game::Game() {
 	GameState = false;
 	TTF_Init();
 	//sprite dimension
-	p.setSource(0,0,217,218);
+	p.setSource(0,0,60*3,46*3);
 	//Pipe.setSource(0, 0, 217, 218);
 	//destination dimension
-	p.setDest(100, 200, 100, 100);
+	p.setDest(100, 200, 60*3, 46*3);
 	//Pipe.setDest(100, 200, 400, 400);
 	loadMedia();
+	srand(time(NULL));
+
 }
 Game::~Game(){}
 
@@ -73,9 +77,11 @@ bool Game::Init()
 
 	//Init variables
 	//size: 104x82
-	Player.Init(20, WINDOW_HEIGHT >> 1, 104, 82, 5);
+	/*Player.Init(20, WINDOW_HEIGHT >> 1, 104, 82, 5);*/
 	idx_shot = 0;
 	int w;
+	SDL_QueryTexture(in, NULL, NULL, &w, NULL);
+	Intro.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(menu, NULL, NULL, &w, NULL);
 	Menu.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(endmenu, NULL, NULL, &w, NULL);
@@ -83,10 +89,14 @@ bool Game::Init()
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
 	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(towd, NULL, NULL, &w, NULL);
-	TowD1.Init(500, 600, 100, 600, 4);
-	TowD2.Init(1100, 600, 100, 600, 4);
-	TowD3.Init(1750, 650, 100, 600, 4);
-	font = TTF_OpenFont("Fonts/calibrib.ttf", 32);
+	TowD1.Init(650, 700, 59 *3, 180*3, 4);
+	TowD2.Init(1300, 700, 59 * 3, 180 * 3, 4);
+	TowD3.Init(1950, 750, 59 * 3, 180 * 3, 4);
+	SDL_QueryTexture(towu, NULL, NULL, &w, NULL);
+	TowU1.Init(650, -300, 59 * 3, 180 * 3, 4);
+	TowU2.Init(1300, -300, 59 * 3, 180 * 3, 4);
+	TowU3.Init(1950, -250, 59 * 3, 180 * 3, 4);
+	font = TTF_OpenFont("Fonts/PIXELADE.ttf", 50);
 	return true;
 }
 
@@ -113,12 +123,17 @@ bool Game::LoadImages()
 		SDL_Log("IMG_Init, failed to init required png support: %s\n", IMG_GetError());
 		return false;
 	}
-	menu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("button.png"));
+	menu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("menu.png"));
 	if (menu == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	endmenu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("end.jpg"));
+	in = SDL_CreateTextureFromSurface(Renderer, IMG_Load("logo.png"));
+	if (in == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	endmenu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("end.png"));
 	if (endmenu == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
@@ -128,8 +143,13 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	towd = SDL_CreateTextureFromSurface(Renderer, IMG_Load("pipe.png"));
+	towd = SDL_CreateTextureFromSurface(Renderer, IMG_Load("towerd.png"));
 	if (towd == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	towu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("toweru.png"));
+	if (towu == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
@@ -147,9 +167,10 @@ void Game::Release()
 	SDL_DestroyTexture(img_background);
 	SDL_DestroyTexture(menu);
 	SDL_DestroyTexture(endmenu);
-	SDL_DestroyTexture(img_player);
+	SDL_DestroyTexture(in);
 	SDL_DestroyTexture(img_shot);
 	SDL_DestroyTexture(towd);
+	SDL_DestroyTexture(towu);
 	Mix_FreeMusic(gMusic);
 	gMusic = NULL;
 
@@ -224,67 +245,74 @@ bool Game::Update()
 	if (keys[SDL_SCANCODE_DOWN] == KEY_REPEAT)	fy = 1;
 	if (keys[SDL_SCANCODE_LEFT] == KEY_REPEAT)	fx = -1;
 	if (keys[SDL_SCANCODE_RIGHT] == KEY_REPEAT)	fx = 1;
-	if (keys[SDLK_LCTRL] == KEY_DOWN)
-	{
-		if (Mix_PlayingMusic() == 0)
-		{
-			//Play the music
-			Mix_PlayMusic(gMusic, -1);
-		}
-		//If music is being played
-		else
-		{
-			//If the music is paused
-			if (Mix_PausedMusic() == 1)
-			{
-				//Resume the music
-				Mix_ResumeMusic();
-			}
-			//If the music is playing
-			else
-			{
-				//Pause the music
-				Mix_PauseMusic();
-			}
-		}
-		points += 1;
-		//get player ypos
-		int Ypos = p.Ypo();
-		//size: 56x20
-		//offset from player: dx, dy = [(29, 3), (29, 59)]
-		Shots[idx_shot].Init(360, Ypos+100, 56, 20, 10);
-		idx_shot++;
-		idx_shot %= MAX_SHOTS;
-	}
-	/*p.Xpo() >= Pipe.Xpo() && p.Xpo() <= Pipe.Xpo()*/
-	SDL_Rect pos;
-
-	
-	//if (p.Ypo() <= Pipe.Ypo() && p.getDest() >= Pipe.getDest())
+	//if (keys[SDLK_LCTRL] == KEY_DOWN)
 	//{
-	//	points++;
+	//	if (Mix_PlayingMusic() == 0)
+	//	{
+	//		//Play the music
+	//		Mix_PlayMusic(gMusic, -1);
+	//	}
+	//	//If music is being played
+	//	else
+	//	{
+	//		//If the music is paused
+	//		if (Mix_PausedMusic() == 1)
+	//		{
+	//			//Resume the music
+	//			Mix_ResumeMusic();
+	//		}
+	//		//If the music is playing
+	//		else
+	//		{
+	//			//Pause the music
+	//			Mix_PauseMusic();
+	//		}
+	//	}
+	//	points += 1;
+	//	//get player ypos
+	//	int Ypos = p.Ypo();
+	//	//size: 56x20
+	//	//offset from player: dx, dy = [(29, 3), (29, 59)]
+	//	Shots[idx_shot].Init(360, Ypos+100, 56, 20, 10);
+	//	idx_shot++;
+	//	idx_shot %= MAX_SHOTS;
 	//}
+
+
+
 
 	return false;
 
 }
 
 
-//void Game::CollisionDetection()
-//{
-//	/*if (Collision::CheckCollision(&p.getDest(), &Pipe.getDest()))
-//	{
-//		points += 1;
-//	}*/
-//	//else if (Collision::CheckCollision(&p.getDest(), &ground1.getDest()) || CollisionManager::CheckCollision(&p.getDest(), &ground2.getDest()) || p.getYpos() < 0)
-//	//{
-//	//	SDL_Delay(500);
-//	//	list.Insert(points, generations);
-//	//	generations++;
-//	//	neuralNetwork.SaveProgress("Progress.txt", generations);
-//	//	Reset();
-//	//}
-//}
+
+void Game::OpenIntro()
+{
+	SDL_Rect rc;
+	//Set the color used for drawing operations
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	//Clear rendering target
+	SDL_RenderClear(Renderer);
+	//Draw menu
+	time1++;
+	if (time1 >=100 && time1 <= 200)
+	{
+		Intro.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+		SDL_RenderCopy(Renderer, in, NULL, &rc);
+	}
+	if (time1 >= 200)
+	{
+		intro = true;
+	}
+	//Update screen
+	SDL_RenderPresent(Renderer);
+	SDL_Delay(10);	// 1000/10 = 100 fps max
+	SDL_Event mouse;
+	SDL_PollEvent(&mouse);
+
+}
+
 
 
 void Game::OpenMenu()
@@ -295,8 +323,13 @@ void Game::OpenMenu()
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
 	//Draw menu
-	Menu.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	SDL_RenderCopy(Renderer, menu, NULL, &rc);
+
+	time2++;
+	if (time2 >= 50)
+	{
+		Menu.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+		SDL_RenderCopy(Renderer, menu, NULL, &rc);
+	}
 	//Update screen
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
@@ -306,7 +339,7 @@ void Game::OpenMenu()
 	{
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		if (x >= 865 && x <= 1055 && y >= 680 && y <= 760) {
+		if (x >= 144*6 && x <= 174*6 && y >= 107*6 && y <= 120*6) {
 			gameReady = true;
 		}
 	}
@@ -329,17 +362,55 @@ void Game::Draw()
 	p.Gravity();
 	Scene.Move(-1, 0);
 	if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);
-	TowD1.Move(-1, 0);
-	if (TowD1.GetX() <= -TowD1.GetWidth())	TowD1.SetX(1920);
-	TowD2.Move(-1, 0);
-	if (TowD2.GetX() <= -TowD2.GetWidth())	TowD2.SetX(1920);
-	TowD3.Move(-1, 0);
-	if (TowD3.GetX() <= -TowD3.GetWidth())	TowD3.SetX(1920);
 
+	TowD1.Move(-1, 0);
+	if (TowD1.GetX() <= -TowD1.GetWidth())
+	{
+		TowD1.SetX(1920);
+		posYD1 = rand() % 400 + 550;
+		TowD1.SetY(posYD1);
+	}
+	TowD2.Move(-1, 0);
+	if (TowD2.GetX() <= -TowD2.GetWidth())
+	{
+		TowD2.SetX(1920);
+		posYD2 = rand() % 400 + 550;
+		TowD2.SetY(posYD2);
+	}
+	TowD3.Move(-1, 0);
+	if (TowD3.GetX() <= -TowD3.GetWidth())
+	{
+		TowD3.SetX(1920);
+		posYD3 = rand() % 400 + 550;
+		TowD3.SetY(posYD3);
+	}
+
+	TowU1.Move(-1, 0);
+	if (TowU1.GetX() <= -TowU1.GetWidth())
+	{
+		TowU1.SetX(1920);
+		TowU1.SetY(posYD1 - 1000);
+	}
+	TowU2.Move(-1, 0);
+	if (TowU2.GetX() <= -TowU2.GetWidth())
+	{
+		TowU2.SetX(1920);
+		TowU2.SetY(posYD2 - 1000);
+	}
+	TowU3.Move(-1, 0);
+	if (TowU3.GetX() <= -TowU3.GetWidth())
+	{
+		TowU3.SetX(1920);
+		TowU3.SetY(posYD3 - 1000);
+
+	}
 	SDL_Rect rc;
 	SDL_Rect d1;
 	SDL_Rect d2;
 	SDL_Rect d3;
+	SDL_Rect u1;
+	SDL_Rect u2;
+	SDL_Rect u3;
 	for (int i = 0; i < MAX_SHOTS; ++i)
 	{
 		if (Shots[i].IsAlive())
@@ -365,24 +436,37 @@ void Game::Draw()
 	SDL_RenderCopy(Renderer, towd, NULL, &d2);
 	TowD3.GetRect(&d3.x, &d3.y, &d3.w, &d3.h);
 	SDL_RenderCopy(Renderer, towd, NULL, &d3);
-	//Pipe.Render(Renderer);
-	SDL_bool collision1 = SDL_HasIntersection(&p.getDest(), &d1);
-	SDL_bool collision2 = SDL_HasIntersection(&p.getDest(), &d2);
-	SDL_bool collision3 = SDL_HasIntersection(&p.getDest(), &d3);
-	if (collision1 ||collision2 || collision3)
-	{
-		points-=5;
-	}
-	else
-	{
-		points++;
-	}
+
+	TowU1.GetRect(&u1.x, &u1.y, &u1.w, &u1.h);
+	SDL_RenderCopy(Renderer, towu, NULL, &u1);
+	TowU2.GetRect(&u2.x, &u2.y, &u2.w, &u2.h);
+	SDL_RenderCopy(Renderer, towu, NULL, &u2);
+	TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
+	SDL_RenderCopy(Renderer, towu, NULL, &u3);
 
 	//Draw player
 	p.Render(Renderer);
+
+	SDL_bool collisionD1 = SDL_HasIntersection(&p.getDest(), &d1);
+	SDL_bool collisionD2 = SDL_HasIntersection(&p.getDest(), &d2);
+	SDL_bool collisionD3 = SDL_HasIntersection(&p.getDest(), &d3);
+	SDL_bool collisionU1 = SDL_HasIntersection(&p.getDest(), &u1);
+	SDL_bool collisionU2 = SDL_HasIntersection(&p.getDest(), &u2);
+	SDL_bool collisionU3 = SDL_HasIntersection(&p.getDest(), &u3);
+	if (collisionD1 ||collisionD2 || collisionD3 || collisionU1 || collisionU2 || collisionU3)
+	{
+		play = true;
+	}
+	time3++;
+	if (time3 >= 50)
+	{
+		points += 10;
+		time3 = 0;
+	}
+
 	//CheckCollision(&p.getDest(), &Pipe.getDest());
 	std::string s = "Score: " + std::to_string(points);
-	Text(s.c_str(), 20, 30, 0, 255, 0);
+	Text(s.c_str(), 20, 30, 49, 41, 54);
 
 
 	//Draw shots
@@ -395,7 +479,7 @@ void Game::Draw()
 		}
 	}
 	int Ypos = p.Ypo();
-	if (Ypos >= 800 || Ypos <= -50)
+	if (Ypos >= 900 || Ypos <= 0)
 	{
 		play = true;
 	}
@@ -408,18 +492,20 @@ void Game::Draw()
 
 void Game::OpenEnd()
 {
-
 	SDL_Rect rc;
 	//Set the color used for drawing operations
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
 	//Draw end
-	Menu.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	SDL_RenderCopy(Renderer, menu, NULL, &rc);
+	EndMenu.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, endmenu, NULL, &rc);
 	//Update screen
+	std::string s = "Score: " + std::to_string(points);
+	Text(s.c_str(), 875, 600, 205, 146, 44);
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
+
 
 	SDL_Event mouse;
 	SDL_PollEvent(&mouse);
@@ -427,7 +513,7 @@ void Game::OpenEnd()
 	{
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		if (x >= 865 && x <= 1055 && y >= 680 && y <= 760) {
+		if (x >= 144*6 && x <= 174*6 && y >= 116*6 && y <= 144*6) {
 			end = true;
 		}
 	}
@@ -447,9 +533,11 @@ void Game::Text(const char* msg, int x, int y, int r, int g, int b)
 	tex = SDL_CreateTextureFromSurface(Renderer, surf);
 	rect.x = x;
 	rect.y = y;
-	rect.w = surf->w;
-	rect.h = surf->h;
+	if (surf != nullptr)
+	{
+		rect.w = surf->w;
+		rect.h = surf->h;
+	}
 	SDL_FreeSurface(surf);
 	SDL_RenderCopy(Renderer, tex, NULL, &rect);
-	SDL_DestroyTexture(tex);
 }

@@ -36,6 +36,10 @@ void Entity::SetX(int posx)
 {
 	x = posx;
 }
+void Entity::SetY(int posx)
+{
+	y = posx;
+}
 void Entity::ShutDown()
 {
 	is_alive = false;

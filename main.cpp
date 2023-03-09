@@ -9,6 +9,18 @@ int main(int argc, char* args[])
 	Game game;
 	if (!game.Init()) return -1;
 
+	while (!game.intro)
+	{
+		game.intro = game.Update();
+		game.OpenIntro();
+
+		if (game.intro)
+		{
+			game.gameReady = false;
+			break;
+		}
+
+	}
 	while (!game.gameReady)
 	{
 		game.gameReady = game.Update();
@@ -35,13 +47,13 @@ int main(int argc, char* args[])
 	{
 		game.end = game.Update();
 		game.OpenEnd();
-
 		if (game.end)
 		{
 			game.Release();
 			break;
 		}
 	}
+
 	
 	game.Release();
 	return 0;

@@ -44,20 +44,26 @@ public:
 
 	bool loadMedia();
 
+	void OpenIntro();
 	void OpenMenu();
 	void OpenEnd();
+	bool intro = false;
 	bool end = true;
-	bool gameReady = false; 
+	bool gameReady = true; 
 	bool play = true;
 	bool player = true;
 	int points = 0;
-
+	int time1 = 0, time2 = 0, time3 = 0;
 	static bool CheckCollision(SDL_Rect* A, SDL_Rect* B);
+
+	int posYD1 = 0;
+	int posYD2 = 0;
+	int posYD3 = 0;
 
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu, *endmenu, *tex, *towd, * towu;
+	SDL_Texture *img_background, *img_shot, *background, * in, *menu, *endmenu, *tex, *towd, *towu;
 	
 	
 	int idx_shot;
@@ -70,7 +76,7 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro;
 
 
 	TTF_Font* font;
