@@ -19,6 +19,9 @@ private:
 	int x, y;
 	int width, height;
 
+	int animationTimer;
+	SDL_Texture* Tex1;
+	SDL_Texture* Tex2;
 public:
 	void Gravity();
 	void GetJumpTime();
@@ -28,6 +31,8 @@ public:
 	bool JumpState();
 	void Render(SDL_Renderer* ren);
 
+	void CreateTexture1(const char* address, SDL_Renderer* ren);
+	void CreateTexture2(const char* address, SDL_Renderer* ren);
 
 	bool PipeUpdate(int incY, int& score);
 	int getPipe1X();

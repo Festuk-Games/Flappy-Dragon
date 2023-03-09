@@ -7,6 +7,8 @@
 #pragma comment( lib, "SDL_image/libx86/SDL2_image.lib" )
 #include "SDL2_ttf/include/SDL_ttf.h"
 #pragma comment(lib, "SDL2_ttf/lib/x86/SDL2_ttf.lib")
+#include "SDL_mixer/include/SDL_mixer.h"
+#pragma comment(lib, "SDL_mixer/libx86/SDL2_mixer.lib")
 
 #include "TextureManager.h"
 #include "Player.h"
@@ -15,6 +17,7 @@
 #include "Text.h"
 #include"Collision.h"
 #include"Object.h"
+#include "Audio.h"
 
 #define WINDOW_WIDTH	1920
 #define WINDOW_HEIGHT	1080
@@ -34,11 +37,12 @@ public:
 	bool Input();
 	bool Update();
 	void Draw();
-	void Ac(const char* msg, int x, int y, int r, int g, int b, int size);
+	void Text(const char* msg, int x, int y, int r, int g, int b, int size);
 
 	void Event();
 	bool getGameState();
 
+	bool loadMedia();
 
 	void OpenMenu();
 	void OpenEnd();
@@ -53,7 +57,7 @@ public:
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu, *endmenu, *tex;
+	SDL_Texture *img_background, *img_player, *img_shot, *background, *menu, *endmenu, *tex, *towd, * towu;
 	
 	
 	int idx_shot;
@@ -66,7 +70,8 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, Pipe;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3;
 
-	Text score;
+	/*Text score;*/
+
 };

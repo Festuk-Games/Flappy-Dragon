@@ -1,8 +1,9 @@
 #include "Game.h"
 
-
 int main(int argc, char* args[])
 {
+
+	
 	double first, last = 0;
 
 	Game game;
