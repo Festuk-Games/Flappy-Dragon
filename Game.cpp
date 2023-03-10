@@ -68,7 +68,6 @@ bool Game::Init()
 	//initialize music
 	audio.Init();
 	//play music
-	audio.PlayMusic("gamemus.ogg", 1.0f);
 
 	//Initialize keys array
 	for (int i = 0; i < MAX_KEYS; ++i)
@@ -100,6 +99,9 @@ bool Game::Init()
 	TowU2.Init(1300, -300, 59 * 3, 180 * 3, 4);
 	TowU3.Init(1950, -250, 59 * 3, 180 * 3, 4);
 	font = TTF_OpenFont("Fonts/PIXELADE.ttf", 50);
+
+	SDL_QueryTexture(coin, NULL, NULL, &w, NULL);
+	Coin.Init(1000, 500, 100, 100, 4);
 
 	god_mode = false;
 	return true;
@@ -148,6 +150,11 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
+	coin = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (coin == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
 
 	return true;
 }
@@ -161,6 +168,7 @@ void Game::Release()
 	SDL_DestroyTexture(img_shot);
 	SDL_DestroyTexture(towd);
 	SDL_DestroyTexture(towu);
+	SDL_DestroyTexture(coin);
 
 	TTF_Quit();
 	IMG_Quit();
@@ -234,7 +242,7 @@ bool Game::Update()
 	if (!Input())	return true;
 	//Process Input
 	int fx = 0, fy = 0;
-	if (keys[SDL_SCANCODE_ESCAPE] == KEY_DOWN)	Release();
+	if (keys[SDL_SCANCODE_ESCAPE] == KEY_DOWN)	close = true;
 	if (keys[SDL_SCANCODE_F1] == KEY_DOWN)		god_mode = !god_mode;
 	if (keys[SDL_SCANCODE_UP] == KEY_REPEAT)	fy = -1;
 	if (keys[SDL_SCANCODE_DOWN] == KEY_REPEAT)	fy = 1;
@@ -309,7 +317,10 @@ void Game::OpenIntro()
 
 }
 
-
+void Game::playMusic()
+{
+	audio.PlayMusic("gamemus.ogg", 1.0f);
+}
 
 void Game::OpenMenu()
 {
@@ -360,51 +371,57 @@ void Game::Draw()
 	if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);
 
 
-		TowD1.Move(-1, 0);
-		if (TowD1.GetX() <= -TowD1.GetWidth())
-		{
-			TowD1.SetX(1920);
-			posYD1 = rand() % 400 + 550;
-			TowD1.SetY(posYD1);
-			//increase waves
-		}
-		TowD2.Move(-1, 0);
-		if (TowD2.GetX() <= -TowD2.GetWidth())
-		{
-			TowD2.SetX(1920);
-			posYD2 = rand() % 400 + 550;
-			TowD2.SetY(posYD2);
-		}
-		TowD3.Move(-1, 0);
-		if (TowD3.GetX() <= -TowD3.GetWidth())
-		{
-			TowD3.SetX(1920);
-			posYD3 = rand() % 400 + 550;
-			TowD3.SetY(posYD3);
-		}
+	TowD1.Move(-1, 0);
+	if (TowD1.GetX() <= -TowD1.GetWidth())
+	{
+		TowD1.SetX(1920);
+		posYD1 = rand() % 400 + 550;
+		TowD1.SetY(posYD1);
+		//increase waves
+	}
+	TowD2.Move(-1, 0);
+	if (TowD2.GetX() <= -TowD2.GetWidth())
+	{
+		TowD2.SetX(1920);
+		posYD2 = rand() % 400 + 550;
+		TowD2.SetY(posYD2);
+	}
+	TowD3.Move(-1, 0);
+	if (TowD3.GetX() <= -TowD3.GetWidth())
+	{
+		TowD3.SetX(1920);
+		posYD3 = rand() % 400 + 550;
+		TowD3.SetY(posYD3);
+	}
 
-		TowU1.Move(-1, 0);
-		if (TowU1.GetX() <= -TowU1.GetWidth())
-		{
-			TowU1.SetX(1920);
-			TowU1.SetY(posYD1 - 950);
-		}
-		TowU2.Move(-1, 0);
-		if (TowU2.GetX() <= -TowU2.GetWidth())
-		{
-			TowU2.SetX(1920);
-			TowU2.SetY(posYD2 - 950);
-		}
-		TowU3.Move(-1, 0);
-		if (TowU3.GetX() <= -TowU3.GetWidth())
-		{
-			TowU3.SetX(1920);
-			TowU3.SetY(posYD3 - 950);
+	TowU1.Move(-1, 0);
+	if (TowU1.GetX() <= -TowU1.GetWidth())
+	{
+		TowU1.SetX(1920);
+		TowU1.SetY(posYD1 - 950);
+	}
+	TowU2.Move(-1, 0);
+	if (TowU2.GetX() <= -TowU2.GetWidth())
+	{
+		TowU2.SetX(1920);
+		TowU2.SetY(posYD2 - 950);
+	}
+	TowU3.Move(-1, 0);
+	if (TowU3.GetX() <= -TowU3.GetWidth())
+	{
+		TowU3.SetX(1920);
+		TowU3.SetY(posYD3 - 950);
 
-		}
+	}
+
+	Coin.Move(-1, 0);
+	if (Coin.GetX() <= -Coin.GetWidth())
+	{
+		Coin.SetX(1920);
+		Coin.SetY(rand() % 600 + 200);
+	}
 	
 
-	
 	SDL_Rect rc;
 	SDL_Rect pl;
 	SDL_Rect d1;
@@ -413,6 +430,8 @@ void Game::Draw()
 	SDL_Rect u1;
 	SDL_Rect u2;
 	SDL_Rect u3;
+	SDL_Rect co;
+
 	for (int i = 0; i < MAX_SHOTS; ++i)
 	{
 		if (Shots[i].IsAlive())
@@ -433,35 +452,28 @@ void Game::Draw()
 	rc.x += rc.w;
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 
-	if (TowD1.GetX() == 1920)
+	/*if (TowD1.GetX() == 1920)
 	{
 		wave++;
-	}
-	if (wave <=1 && endwave <= 2)
-	{
-		if (TowD3.GetX() == 0)
-		{
-			endwave++;
-		}
-		TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
-		SDL_RenderCopy(Renderer, towd, NULL, &d1);
-		TowD2.GetRect(&d2.x, &d2.y, &d2.w, &d2.h);
-		SDL_RenderCopy(Renderer, towd, NULL, &d2);
-		TowD3.GetRect(&d3.x, &d3.y, &d3.w, &d3.h);
-		SDL_RenderCopy(Renderer, towd, NULL, &d3);
+	}*/
 
-		TowU1.GetRect(&u1.x, &u1.y, &u1.w, &u1.h);
-		SDL_RenderCopy(Renderer, towu, NULL, &u1);
-		TowU2.GetRect(&u2.x, &u2.y, &u2.w, &u2.h);
-		SDL_RenderCopy(Renderer, towu, NULL, &u2);
-		TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
-		SDL_RenderCopy(Renderer, towu, NULL, &u3);
-	}
-	else
-	{
-		TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
-		SDL_RenderCopy(Renderer, towu, NULL, &d1);
-	}
+	TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
+	SDL_RenderCopy(Renderer, towd, NULL, &d1);
+	TowD2.GetRect(&d2.x, &d2.y, &d2.w, &d2.h);
+	SDL_RenderCopy(Renderer, towd, NULL, &d2);
+	TowD3.GetRect(&d3.x, &d3.y, &d3.w, &d3.h);
+	SDL_RenderCopy(Renderer, towd, NULL, &d3);
+
+	TowU1.GetRect(&u1.x, &u1.y, &u1.w, &u1.h);
+	SDL_RenderCopy(Renderer, towu, NULL, &u1);
+	TowU2.GetRect(&u2.x, &u2.y, &u2.w, &u2.h);
+	SDL_RenderCopy(Renderer, towu, NULL, &u2);
+	TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
+	SDL_RenderCopy(Renderer, towu, NULL, &u3);
+
+	Coin.GetRect(&co.x, &co.y, &co.w, &co.h);
+	SDL_RenderCopy(Renderer, coin, NULL, &co);
+
 	p.GetCollider(&pl.x, &pl.y, &pl.w, &pl.h);
 
 
@@ -483,8 +495,10 @@ void Game::Draw()
 		SDL_RenderDrawRect(Renderer, &u1);
 		SDL_RenderDrawRect(Renderer, &u2);
 		SDL_RenderDrawRect(Renderer, &u3);
+		SDL_RenderDrawRect(Renderer, &co);
 	}
 
+	SDL_bool collisionCo = SDL_HasIntersection(&pl, &co);
 	SDL_bool collisionD1 = SDL_HasIntersection(&pl, &d1);
 	SDL_bool collisionD2 = SDL_HasIntersection(&pl, &d2);
 	SDL_bool collisionD3 = SDL_HasIntersection(&pl, &d3);
@@ -498,6 +512,10 @@ void Game::Draw()
 			dead = true;
 		}
 	/*	play = true;*/
+	}
+	if (collisionCo)
+	{
+		points += 100;
 	}
 	time3++;
 	if (time3 >= 50)

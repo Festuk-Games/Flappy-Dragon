@@ -19,8 +19,8 @@
 #include"Object.h"
 #include "Audio.h"
 
-#define WINDOW_WIDTH	1680
-#define WINDOW_HEIGHT	1050
+#define WINDOW_WIDTH	1920
+#define WINDOW_HEIGHT	1080
 #define MAX_KEYS		256
 #define MAX_SHOTS		32
 
@@ -44,6 +44,7 @@ public:
 
 	bool loadMedia();
 	bool initSound();
+	void playMusic();
 
 	void OpenIntro();
 	void OpenMenu();
@@ -64,11 +65,12 @@ public:
 
 	int wave = 0;
 	int endwave = 0;
+	bool close = false;
 
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_shot, *background, * in, *menu, *endmenu, *tex, *towd, *towu;
+	SDL_Texture *img_background, *img_shot, *background, * in, *menu, *endmenu, *tex, *towd, *towu, *coin;
 	
 	
 	int idx_shot;
@@ -81,7 +83,7 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Coin;
 
 	Audio audio;
 

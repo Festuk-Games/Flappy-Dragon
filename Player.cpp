@@ -27,7 +27,6 @@ void Player::Render(SDL_Renderer* ren)
 	{
 		animationTimer = 0;
 	}
-	
 }
 
 void Player::RenderDead(SDL_Renderer* ren)

@@ -33,6 +33,10 @@ int main(int argc, char* args[])
 		}
 
 	}
+	if (!game.play)
+	{
+		game.playMusic();
+	}
 	while (!game.play)
 	{
 		game.play = game.Update();
@@ -41,6 +45,11 @@ int main(int argc, char* args[])
 		{
 			game.end = false;
 			break;
+		}
+		if (game.close)
+		{
+			game.Release();
+			return 0;
 		}
 	}
 	while (!game.end)
