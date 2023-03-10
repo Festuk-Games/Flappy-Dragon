@@ -98,6 +98,8 @@ bool Game::Init()
 	TowU2.Init(1300, -300, 59 * 3, 180 * 3, 4);
 	TowU3.Init(1950, -250, 59 * 3, 180 * 3, 4);
 	font = TTF_OpenFont("Fonts/PIXELADE.ttf", 50);
+
+	god_mode = false;
 	return true;
 }
 
@@ -430,6 +432,7 @@ void Game::Draw()
 	
 	//Set the color used for drawing operations
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	if (god_mode) SDL_SetRenderDrawColor(Renderer, 255, 0, 0, 255);
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
 	//Draw scene
@@ -461,6 +464,17 @@ void Game::Draw()
 	{
 		p.RenderDead(Renderer);
 	}
+	if (god_mode)
+	{
+		SDL_RenderDrawRect(Renderer, &p.getDest());
+		SDL_RenderDrawRect(Renderer, &d1);
+		SDL_RenderDrawRect(Renderer, &d2);
+		SDL_RenderDrawRect(Renderer, &d3);
+		SDL_RenderDrawRect(Renderer, &u1);
+		SDL_RenderDrawRect(Renderer, &u2);
+		SDL_RenderDrawRect(Renderer, &u3);
+	}
+
 	SDL_bool collisionD1 = SDL_HasIntersection(&p.getDest(), &d1);
 	SDL_bool collisionD2 = SDL_HasIntersection(&p.getDest(), &d2);
 	SDL_bool collisionD3 = SDL_HasIntersection(&p.getDest(), &d3);
@@ -479,20 +493,20 @@ void Game::Draw()
 		time3 = 0;
 	}
 
-	//CheckCollision(&p.getDest(), &Pipe.getDest());
 	std::string s = "Score: " + std::to_string(points);
 	Text(s.c_str(), 20, 30, 49, 41, 54);
 
 
 	//Draw shots
-	for (int i = 0; i < MAX_SHOTS; ++i)
+	/*for (int i = 0; i < MAX_SHOTS; ++i)
 	{
 		if (Shots[i].IsAlive())
 		{
 			Shots[i].GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
 			SDL_RenderCopy(Renderer, img_shot, NULL, &rc);
 		}
-	}
+	}*/
+
 	int Ypos = p.Ypo();
 	if (Ypos >= 900 || Ypos <= 0)
 	{
