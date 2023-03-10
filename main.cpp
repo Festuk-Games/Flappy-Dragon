@@ -1,5 +1,6 @@
 #include "Game.h"
 
+
 int main(int argc, char* args[])
 {
 
@@ -28,6 +29,7 @@ int main(int argc, char* args[])
 
 		if (game.gameReady)
 		{
+			game.temporizador();
 			game.play = false;
 			break;
 		}
@@ -35,7 +37,7 @@ int main(int argc, char* args[])
 	}
 	if (!game.play)
 	{
-		game.playMusic();
+		game.playMusicGame();
 	}
 	while (!game.play)
 	{
@@ -51,6 +53,10 @@ int main(int argc, char* args[])
 			game.Release();
 			return 0;
 		}
+	}
+	if (!game.end)
+	{
+		game.playMusicEnd();
 	}
 	while (!game.end)
 	{

@@ -8,8 +8,6 @@
 using namespace std;
 Mix_Music* gMusic = NULL;
 
-int i = 0;
-
 Game::Game() {
 	Window = NULL;
 	Renderer = NULL;
@@ -25,13 +23,6 @@ Game::Game() {
 
 }
 Game::~Game(){}
-
-
-bool Game::getGameState()
-{
-	return  GameState;
-}
-
 
 bool Game::Init()
 {
@@ -82,6 +73,8 @@ bool Game::Init()
 	/*Player.Init(20, WINDOW_HEIGHT >> 1, 104, 82, 5);*/
 	idx_shot = 0;
 	int w;
+	SDL_QueryTexture(reloj, NULL, NULL, &w, NULL);
+	Pause.Init(0, 0, 400, 400, 4);
 	SDL_QueryTexture(in, NULL, NULL, &w, NULL);
 	Intro.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(menu, NULL, NULL, &w, NULL);
@@ -101,7 +94,7 @@ bool Game::Init()
 	font = TTF_OpenFont("Fonts/PIXELADE.ttf", 50);
 
 	SDL_QueryTexture(coin, NULL, NULL, &w, NULL);
-	Coin.Init(1000, 400, 100, 100, 4);
+	Coin.Init(1000, 400, 50, 50, 4);
 
 	god_mode = false;
 	return true;
@@ -152,6 +145,11 @@ bool Game::LoadImages()
 	}
 	coin = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
 	if (coin == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	reloj = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (reloj == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
@@ -250,27 +248,6 @@ bool Game::Update()
 	if (keys[SDL_SCANCODE_RIGHT] == KEY_REPEAT)	fx = 1;
 	//if (keys[SDLK_LCTRL] == KEY_DOWN)
 	//{
-	//	if (Mix_PlayingMusic() == 0)
-	//	{
-	//		//Play the music
-	//		Mix_PlayMusic(gMusic, -1);
-	//	}
-	//	//If music is being played
-	//	else
-	//	{
-	//		//If the music is paused
-	//		if (Mix_PausedMusic() == 1)
-	//		{
-	//			//Resume the music
-	//			Mix_ResumeMusic();
-	//		}
-	//		//If the music is playing
-	//		else
-	//		{
-	//			//Pause the music
-	//			Mix_PauseMusic();
-	//		}
-	//	}
 	//	points += 1;
 	//	//get player ypos
 	//	int Ypos = p.Ypo();
@@ -280,8 +257,6 @@ bool Game::Update()
 	//	idx_shot++;
 	//	idx_shot %= MAX_SHOTS;
 	//}
-
-
 
 
 	return false;
@@ -317,9 +292,18 @@ void Game::OpenIntro()
 
 }
 
-void Game::playMusic()
+
+void Game::playMusicMenu()
 {
-	audio.PlayMusic("gamemus.ogg", 1.0f);
+	audio.PlayMusic("gamemus.ogg", 2.0f);
+}
+void Game::playMusicGame()
+{
+	audio.PlayMusic("gamemus.ogg", 2.0f);
+}
+void Game::playMusicEnd()
+{
+	audio.PlayMusic("", 1.0f);
 }
 
 void Game::OpenMenu()
@@ -350,7 +334,6 @@ void Game::OpenMenu()
 			gameReady = true;
 		}
 	}
-
 }
 
 bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
@@ -363,6 +346,31 @@ bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
 	else
 		return false;
 }
+
+void Game::temporizador() {
+	SDL_Rect rc;
+	//Set the color used for drawing operations
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	//Clear rendering target
+	SDL_RenderClear(Renderer);
+	//Draw menu
+
+	time2++;
+	if (time2 >= 50)
+	{
+		Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+		SDL_RenderCopy(Renderer, img_background, NULL, &rc);
+		Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+		SDL_RenderCopy(Renderer, reloj, NULL, &rc);
+		p.Render(Renderer);
+
+	}
+	//Update screen
+	SDL_RenderPresent(Renderer);
+	SDL_Delay(3000);    // 1000/10 = 100 fps ma
+
+}
+
 
 void Game::Draw()
 {
@@ -411,15 +419,17 @@ void Game::Draw()
 	{
 		TowU3.SetX(1920);
 		TowU3.SetY(posYD3 - 950);
-		coin1 = true;
 	}
 
 	Coin.Move(-1, 0);
 	if (Coin.GetX() <= -Coin.GetWidth())
 	{
-		Coin.SetX(1920 + (59 * 3)-100);
+		Coin.SetX(1920 + (59 * 3)-50);
 		Coin.SetY(rand() % 300 + 200);
+		coin1 = true;
+		coin1prob = rand() % 3;
 	}
+
 	
 
 	SDL_Rect rc;
@@ -471,8 +481,11 @@ void Game::Draw()
 	TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
 	SDL_RenderCopy(Renderer, towu, NULL, &u3);
 
-	Coin.GetRect(&co.x, &co.y, &co.w, &co.h);
-	SDL_RenderCopy(Renderer, coin, NULL, &co);
+	if (coin1 && coin1prob == 1)
+	{
+		Coin.GetRect(&co.x, &co.y, &co.w, &co.h);
+		SDL_RenderCopy(Renderer, coin, NULL, &co);
+	}
 
 	p.GetCollider(&pl.x, &pl.y, &pl.w, &pl.h);
 
@@ -524,7 +537,7 @@ void Game::Draw()
 	time3++;
 	if (time3 >= 50)
 	{
-		points += 10;
+		points += 5;
 		time3 = 0;
 	}
 
@@ -543,7 +556,7 @@ void Game::Draw()
 	}*/
 
 	int Ypos = p.Ypo();
-	if (Ypos >= 900 || Ypos <= 0)
+	if (Ypos >= 1000 || Ypos <= 0)
 	{
 		play = true;
 	}

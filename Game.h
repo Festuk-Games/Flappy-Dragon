@@ -40,11 +40,10 @@ public:
 	void Text(const char* msg, int x, int y, int r, int g, int b);
 
 	void Event();
-	bool getGameState();
 
-	bool loadMedia();
-	bool initSound();
-	void playMusic();
+	void playMusicMenu();
+	void playMusicGame();
+	void playMusicEnd();
 
 	void OpenIntro();
 	void OpenMenu();
@@ -67,11 +66,15 @@ public:
 	int endwave = 0;
 	bool close = false;
 	bool coin1 = true;
+	int coin1prob = 0;
+
+	void temporizador();
+
 
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_shot, *background, * in, *menu, *endmenu, *tex, *towd, *towu, *coin;
+	SDL_Texture *img_background, *img_shot, *background, *in, *menu, *endmenu, *tex, *towd, *towu, *coin, *reloj;
 	
 	
 	int idx_shot;
@@ -84,7 +87,7 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Coin;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Coin, Pause;
 
 	Audio audio;
 

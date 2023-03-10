@@ -19,7 +19,6 @@ bool Audio::Init()
 
 	//todo 2: Init SDL audio subsystem.
 
-
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
 	{
 		SDL_Log("SDL EVENTS Could not initialize. SDL_Error %s\n", Mix_GetError());
