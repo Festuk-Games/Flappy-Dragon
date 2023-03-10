@@ -19,8 +19,8 @@
 #include"Object.h"
 #include "Audio.h"
 
-#define WINDOW_WIDTH	1920
-#define WINDOW_HEIGHT	1080
+#define WINDOW_WIDTH	1600
+#define WINDOW_HEIGHT	900
 #define MAX_KEYS		256
 #define MAX_SHOTS		32
 
@@ -43,6 +43,7 @@ public:
 	bool getGameState();
 
 	bool loadMedia();
+	bool initSound();
 
 	void OpenIntro();
 	void OpenMenu();
@@ -79,6 +80,7 @@ private:
 
 	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro;
 
+	Audio audio;
 
 	TTF_Font* font;
 	/*Text score;*/

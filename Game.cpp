@@ -21,11 +21,11 @@ Game::Game() {
 	//destination dimension
 	p.setDest(100, 200, 60*3, 46*3);
 	//Pipe.setDest(100, 200, 400, 400);
-	loadMedia();
 	srand(time(NULL));
 
 }
 Game::~Game(){}
+
 
 bool Game::getGameState()
 {
@@ -39,10 +39,6 @@ bool Game::Init()
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return false;
-	}
-	if (Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-	{
-		printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 	}
 	//Create our window: title, x, y, w, h, flags
 	Window = SDL_CreateWindow("Flappy Dragon", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
@@ -68,6 +64,12 @@ bool Game::Init()
 		p.CreateTexture3("dragon4.png", Renderer);
 		shot.CreateTexture("shot.png", Renderer);
 	}
+
+	//initialize music
+	audio.Init();
+	//play music
+	audio.PlayMusic("gamemus.ogg", 1.0f);
+
 	//Initialize keys array
 	for (int i = 0; i < MAX_KEYS; ++i)
 		keys[i] = KEY_IDLE;
@@ -102,21 +104,6 @@ bool Game::Init()
 	god_mode = false;
 	return true;
 }
-
-
-bool Game::loadMedia()
-{
-	bool success = true;
-	//Load music
-	gMusic = Mix_LoadMUS("gamemus.ogg");
-	if (gMusic == NULL)
-	{
-		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
-		
-	}
-	return success;
-}
-
 
 
 bool Game::LoadImages()
@@ -174,8 +161,6 @@ void Game::Release()
 	SDL_DestroyTexture(img_shot);
 	SDL_DestroyTexture(towd);
 	SDL_DestroyTexture(towu);
-	Mix_FreeMusic(gMusic);
-	gMusic = NULL;
 
 	TTF_Quit();
 	IMG_Quit();
@@ -305,6 +290,7 @@ void Game::OpenIntro()
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
 	//Draw menu
+
 	time1++;
 	if (time1 >=100 && time1 <= 200)
 	{
@@ -369,6 +355,7 @@ bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
 
 void Game::Draw()
 {
+
 	p.Gravity();
 	Scene.Move(-1, 0);
 	if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);
@@ -483,7 +470,10 @@ void Game::Draw()
 	SDL_bool collisionU3 = SDL_HasIntersection(&p.getDest(), &u3);
 	if (collisionD1 ||collisionD2 || collisionD3 || collisionU1 || collisionU2 || collisionU3)
 	{
-		dead = true;
+		if (!god_mode)
+		{
+			dead = true;
+		}
 	/*	play = true;*/
 	}
 	time3++;
@@ -531,7 +521,7 @@ void Game::OpenEnd()
 	SDL_RenderCopy(Renderer, endmenu, NULL, &rc);
 	//Update screen
 	std::string s = "Score: " + std::to_string(points);
-	Text(s.c_str(), 875, 600, 205, 146, 44);
+	Text(s.c_str(), 710, 500, 205, 146, 44);
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
 
