@@ -355,53 +355,58 @@ bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
 
 void Game::Draw()
 {
-
 	p.Gravity();
 	Scene.Move(-1, 0);
 	if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);
 
-	TowD1.Move(-1, 0);
-	if (TowD1.GetX() <= -TowD1.GetWidth())
-	{
-		TowD1.SetX(1920);
-		posYD1 = rand() % 400 + 550;
-		TowD1.SetY(posYD1);
-	}
-	TowD2.Move(-1, 0);
-	if (TowD2.GetX() <= -TowD2.GetWidth())
-	{
-		TowD2.SetX(1920);
-		posYD2 = rand() % 400 + 550;
-		TowD2.SetY(posYD2);
-	}
-	TowD3.Move(-1, 0);
-	if (TowD3.GetX() <= -TowD3.GetWidth())
-	{
-		TowD3.SetX(1920);
-		posYD3 = rand() % 400 + 550;
-		TowD3.SetY(posYD3);
-	}
 
-	TowU1.Move(-1, 0);
-	if (TowU1.GetX() <= -TowU1.GetWidth())
-	{
-		TowU1.SetX(1920);
-		TowU1.SetY(posYD1 - 950);
-	}
-	TowU2.Move(-1, 0);
-	if (TowU2.GetX() <= -TowU2.GetWidth())
-	{
-		TowU2.SetX(1920);
-		TowU2.SetY(posYD2 - 950);
-	}
-	TowU3.Move(-1, 0);
-	if (TowU3.GetX() <= -TowU3.GetWidth())
-	{
-		TowU3.SetX(1920);
-		TowU3.SetY(posYD3 - 950);
+		TowD1.Move(-1, 0);
+		if (TowD1.GetX() <= -TowD1.GetWidth())
+		{
+			TowD1.SetX(1920);
+			posYD1 = rand() % 400 + 550;
+			TowD1.SetY(posYD1);
+			//increase waves
+		}
+		TowD2.Move(-1, 0);
+		if (TowD2.GetX() <= -TowD2.GetWidth())
+		{
+			TowD2.SetX(1920);
+			posYD2 = rand() % 400 + 550;
+			TowD2.SetY(posYD2);
+		}
+		TowD3.Move(-1, 0);
+		if (TowD3.GetX() <= -TowD3.GetWidth())
+		{
+			TowD3.SetX(1920);
+			posYD3 = rand() % 400 + 550;
+			TowD3.SetY(posYD3);
+		}
 
-	}
+		TowU1.Move(-1, 0);
+		if (TowU1.GetX() <= -TowU1.GetWidth())
+		{
+			TowU1.SetX(1920);
+			TowU1.SetY(posYD1 - 950);
+		}
+		TowU2.Move(-1, 0);
+		if (TowU2.GetX() <= -TowU2.GetWidth())
+		{
+			TowU2.SetX(1920);
+			TowU2.SetY(posYD2 - 950);
+		}
+		TowU3.Move(-1, 0);
+		if (TowU3.GetX() <= -TowU3.GetWidth())
+		{
+			TowU3.SetX(1920);
+			TowU3.SetY(posYD3 - 950);
+
+		}
+	
+
+	
 	SDL_Rect rc;
+	SDL_Rect pl;
 	SDL_Rect d1;
 	SDL_Rect d2;
 	SDL_Rect d3;
@@ -419,7 +424,7 @@ void Game::Draw()
 	
 	//Set the color used for drawing operations
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
-	if (god_mode) SDL_SetRenderDrawColor(Renderer, 255, 0, 0, 255);
+	if (god_mode) SDL_SetRenderDrawColor(Renderer, 0, 0, 255, 255);
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
 	//Draw scene
@@ -428,19 +433,37 @@ void Game::Draw()
 	rc.x += rc.w;
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 
-	TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
-	SDL_RenderCopy(Renderer, towd, NULL, &d1);
-	TowD2.GetRect(&d2.x, &d2.y, &d2.w, &d2.h);
-	SDL_RenderCopy(Renderer, towd, NULL, &d2);
-	TowD3.GetRect(&d3.x, &d3.y, &d3.w, &d3.h);
-	SDL_RenderCopy(Renderer, towd, NULL, &d3);
+	if (TowD1.GetX() == 1920)
+	{
+		wave++;
+	}
+	if (wave <=1 && endwave <= 2)
+	{
+		if (TowD3.GetX() == 0)
+		{
+			endwave++;
+		}
+		TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
+		SDL_RenderCopy(Renderer, towd, NULL, &d1);
+		TowD2.GetRect(&d2.x, &d2.y, &d2.w, &d2.h);
+		SDL_RenderCopy(Renderer, towd, NULL, &d2);
+		TowD3.GetRect(&d3.x, &d3.y, &d3.w, &d3.h);
+		SDL_RenderCopy(Renderer, towd, NULL, &d3);
 
-	TowU1.GetRect(&u1.x, &u1.y, &u1.w, &u1.h);
-	SDL_RenderCopy(Renderer, towu, NULL, &u1);
-	TowU2.GetRect(&u2.x, &u2.y, &u2.w, &u2.h);
-	SDL_RenderCopy(Renderer, towu, NULL, &u2);
-	TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
-	SDL_RenderCopy(Renderer, towu, NULL, &u3);
+		TowU1.GetRect(&u1.x, &u1.y, &u1.w, &u1.h);
+		SDL_RenderCopy(Renderer, towu, NULL, &u1);
+		TowU2.GetRect(&u2.x, &u2.y, &u2.w, &u2.h);
+		SDL_RenderCopy(Renderer, towu, NULL, &u2);
+		TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
+		SDL_RenderCopy(Renderer, towu, NULL, &u3);
+	}
+	else
+	{
+		TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
+		SDL_RenderCopy(Renderer, towu, NULL, &d1);
+	}
+	p.GetCollider(&pl.x, &pl.y, &pl.w, &pl.h);
+
 
 	//Draw player
 	if (!dead)
@@ -453,7 +476,7 @@ void Game::Draw()
 	}
 	if (god_mode)
 	{
-		SDL_RenderDrawRect(Renderer, &p.getDest());
+		SDL_RenderDrawRect(Renderer, &pl);
 		SDL_RenderDrawRect(Renderer, &d1);
 		SDL_RenderDrawRect(Renderer, &d2);
 		SDL_RenderDrawRect(Renderer, &d3);
@@ -462,12 +485,12 @@ void Game::Draw()
 		SDL_RenderDrawRect(Renderer, &u3);
 	}
 
-	SDL_bool collisionD1 = SDL_HasIntersection(&p.getDest(), &d1);
-	SDL_bool collisionD2 = SDL_HasIntersection(&p.getDest(), &d2);
-	SDL_bool collisionD3 = SDL_HasIntersection(&p.getDest(), &d3);
-	SDL_bool collisionU1 = SDL_HasIntersection(&p.getDest(), &u1);
-	SDL_bool collisionU2 = SDL_HasIntersection(&p.getDest(), &u2);
-	SDL_bool collisionU3 = SDL_HasIntersection(&p.getDest(), &u3);
+	SDL_bool collisionD1 = SDL_HasIntersection(&pl, &d1);
+	SDL_bool collisionD2 = SDL_HasIntersection(&pl, &d2);
+	SDL_bool collisionD3 = SDL_HasIntersection(&pl, &d3);
+	SDL_bool collisionU1 = SDL_HasIntersection(&pl, &u1);
+	SDL_bool collisionU2 = SDL_HasIntersection(&pl, &u2);
+	SDL_bool collisionU3 = SDL_HasIntersection(&pl, &u3);
 	if (collisionD1 ||collisionD2 || collisionD3 || collisionU1 || collisionU2 || collisionU3)
 	{
 		if (!god_mode)

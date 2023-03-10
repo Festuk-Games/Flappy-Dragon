@@ -20,6 +20,14 @@ SDL_Rect& Object::getDest()
 	return dest;
 }
 
+void Object::GetCollider(int* posx, int* posy, int* w, int* h)
+{
+	*posx = dest.x+45;
+	*posy = dest.y+40;
+	*w = dest.w-80;
+	*h = dest.h-60;
+}
+
 void Object::setSource(int x, int y, int w, int h)
 {
 	src.x = x;

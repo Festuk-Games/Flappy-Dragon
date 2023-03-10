@@ -19,8 +19,8 @@
 #include"Object.h"
 #include "Audio.h"
 
-#define WINDOW_WIDTH	1600
-#define WINDOW_HEIGHT	900
+#define WINDOW_WIDTH	1680
+#define WINDOW_HEIGHT	1050
 #define MAX_KEYS		256
 #define MAX_SHOTS		32
 
@@ -61,6 +61,9 @@ public:
 	int posYD2 = 0;
 	int posYD3 = 0;
 	bool dead = false;
+
+	int wave = 0;
+	int endwave = 0;
 
 private:
 	SDL_Window *Window;

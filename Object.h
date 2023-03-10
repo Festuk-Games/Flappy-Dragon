@@ -21,6 +21,7 @@ public:
 	Object();
 	void setSource(int x, int y, int w, int h);
 	void setDest(int x, int y, int w, int h);
+	void GetCollider(int* posx, int* posy, int* w, int* h);
 	SDL_Texture* getTexture();
 	SDL_Rect& getSrc();
 	SDL_Rect& getDest();
