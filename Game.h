@@ -66,6 +66,7 @@ public:
 	int wave = 0;
 	int endwave = 0;
 	bool close = false;
+	bool coin1 = true;
 
 private:
 	SDL_Window *Window;

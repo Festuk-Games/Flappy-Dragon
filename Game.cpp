@@ -91,17 +91,17 @@ bool Game::Init()
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
 	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(towd, NULL, NULL, &w, NULL);
-	TowD1.Init(650, 700, 59 *3, 180*3, 4);
-	TowD2.Init(1300, 700, 59 * 3, 180 * 3, 4);
-	TowD3.Init(1950, 750, 59 * 3, 180 * 3, 4);
+	TowD1.Init(640, 700, 59 *3, 180*3, 4);
+	TowD2.Init(1280, 700, 59 * 3, 180 * 3, 4);
+	TowD3.Init(1920, 750, 59 * 3, 180 * 3, 4);
 	SDL_QueryTexture(towu, NULL, NULL, &w, NULL);
-	TowU1.Init(650, -300, 59 * 3, 180 * 3, 4);
-	TowU2.Init(1300, -300, 59 * 3, 180 * 3, 4);
-	TowU3.Init(1950, -250, 59 * 3, 180 * 3, 4);
+	TowU1.Init(640, -300, 59 * 3, 180 * 3, 4);
+	TowU2.Init(1280, -300, 59 * 3, 180 * 3, 4);
+	TowU3.Init(1920, -250, 59 * 3, 180 * 3, 4);
 	font = TTF_OpenFont("Fonts/PIXELADE.ttf", 50);
 
 	SDL_QueryTexture(coin, NULL, NULL, &w, NULL);
-	Coin.Init(1000, 500, 100, 100, 4);
+	Coin.Init(1000, 400, 100, 100, 4);
 
 	god_mode = false;
 	return true;
@@ -411,14 +411,14 @@ void Game::Draw()
 	{
 		TowU3.SetX(1920);
 		TowU3.SetY(posYD3 - 950);
-
+		coin1 = true;
 	}
 
 	Coin.Move(-1, 0);
 	if (Coin.GetX() <= -Coin.GetWidth())
 	{
-		Coin.SetX(1920);
-		Coin.SetY(rand() % 600 + 200);
+		Coin.SetX(1920 + (59 * 3)-100);
+		Coin.SetY(rand() % 300 + 200);
 	}
 	
 
@@ -515,7 +515,11 @@ void Game::Draw()
 	}
 	if (collisionCo)
 	{
-		points += 100;
+		if (coin1)
+		{
+			points += 100;
+			coin1 = false;
+		}
 	}
 	time3++;
 	if (time3 >= 50)
@@ -562,10 +566,9 @@ void Game::OpenEnd()
 	SDL_RenderCopy(Renderer, endmenu, NULL, &rc);
 	//Update screen
 	std::string s = "Score: " + std::to_string(points);
-	Text(s.c_str(), 710, 500, 205, 146, 44);
+	Text(s.c_str(), 850, 600, 205, 146, 44);
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
-
 
 	SDL_Event mouse;
 	SDL_PollEvent(&mouse);

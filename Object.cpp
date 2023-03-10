@@ -22,8 +22,10 @@ SDL_Rect& Object::getDest()
 
 void Object::GetCollider(int* posx, int* posy, int* w, int* h)
 {
+	//collision position
 	*posx = dest.x+45;
 	*posy = dest.y+40;
+	//collision size
 	*w = dest.w-80;
 	*h = dest.h-60;
 }
