@@ -73,14 +73,16 @@ public:
 	bool e3 = true;
 	int e3prob = 0;
 
-	void temporizador();
+	int egg1count = 0;
+	int egg2count = 0;
+	int egg3count = 0;
 
+	void timer();
 
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_shot, *background, *in, *menu, *endmenu, *tex, *towd, *towu, *egg1, *egg2, *egg3, *reloj;
-	
+	SDL_Texture *img_background, *img_shot, *background, *in, *menu, *endmenu, *tex, *towd, *towu, *egg1, *egg2, *egg3, *pause, * egg1c, * egg2c, * egg3c;
 	
 	int idx_shot;
 
@@ -92,7 +94,7 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Egg1, Egg2, Egg3, Pause;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Egg1, Egg2, Egg3, Pause, Eggc1, Eggc2, Eggc3;
 
 	Audio audio;
 

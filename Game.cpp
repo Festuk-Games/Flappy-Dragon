@@ -73,7 +73,7 @@ bool Game::Init()
 	/*Player.Init(20, WINDOW_HEIGHT >> 1, 104, 82, 5);*/
 	idx_shot = 0;
 	int w;
-	SDL_QueryTexture(reloj, NULL, NULL, &w, NULL);
+	SDL_QueryTexture(pause, NULL, NULL, &w, NULL);
 	Pause.Init(0, 0, 400, 400, 4);
 	SDL_QueryTexture(in, NULL, NULL, &w, NULL);
 	Intro.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
@@ -99,6 +99,13 @@ bool Game::Init()
 	Egg2.Init(1640, 400, 50, 50, 4);
 	SDL_QueryTexture(egg3, NULL, NULL, &w, NULL);
 	Egg3.Init(2280, 400, 50, 50, 4);
+
+	SDL_QueryTexture(egg1c, NULL, NULL, &w, NULL);
+	Eggc1.Init(40, 105, 40, 40, 4);
+	SDL_QueryTexture(egg2c, NULL, NULL, &w, NULL);
+	Eggc2.Init(40, 155, 40, 40, 4);
+	SDL_QueryTexture(egg3c, NULL, NULL, &w, NULL);
+	Eggc3.Init(40, 205, 40, 40, 4);
 
 	god_mode = false;
 	return true;
@@ -142,11 +149,11 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	img_shot = SDL_CreateTextureFromSurface(Renderer, IMG_Load("shot.png"));
-	if (img_shot == NULL) {
-		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
-		return false;
-	}
+	//img_shot = SDL_CreateTextureFromSurface(Renderer, IMG_Load("shot.png"));
+	//if (img_shot == NULL) {
+	//	SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+	//	return false;
+	//}
 	egg1 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
 	if (egg1 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
@@ -162,8 +169,23 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	reloj = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
-	if (reloj == NULL) {
+	egg1c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (egg1c == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	egg2c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (egg2c == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	egg3c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (egg3c == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	pause = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (pause == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
@@ -183,7 +205,10 @@ void Game::Release()
 	SDL_DestroyTexture(egg1);
 	SDL_DestroyTexture(egg2);
 	SDL_DestroyTexture(egg3);
-	SDL_DestroyTexture(reloj);
+	SDL_DestroyTexture(egg1c);
+	SDL_DestroyTexture(egg2c);
+	SDL_DestroyTexture(egg3c);
+	SDL_DestroyTexture(pause);
 
 	TTF_Quit();
 	IMG_Quit();
@@ -203,14 +228,6 @@ bool Game::Input()
 		GameState = false;
 		Release();
 		return false;
-	}
-	if (event.type == SDL_MOUSEMOTION)
-	{
-		cout << event.motion.x << "  " << event.motion.y << endl;
-	}
-	if (event.type == SDL_MOUSEBUTTONDOWN && event.motion.x <= 5 && event.motion.x >= 5 && event.motion.y <= 5 && event.motion.y >= 5)
-	{
-		cout << "Pressed" << endl;
 	}
 	if (event.type == SDL_KEYDOWN)
 	{
@@ -353,7 +370,7 @@ bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
 		return false;
 }
 
-void Game::temporizador() {
+void Game::timer() {
 	SDL_Rect rc;
 	//Set the color used for drawing operations
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
@@ -364,7 +381,7 @@ void Game::temporizador() {
 	Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 	Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	SDL_RenderCopy(Renderer, reloj, NULL, &rc);
+	SDL_RenderCopy(Renderer, pause, NULL, &rc);
 	p.Render(Renderer);
 
 	//Update screen
@@ -385,7 +402,6 @@ void Game::Draw()
 		TowD1.SetX(1920);
 		posYD1 = rand() % 400 + 550;
 		TowD1.SetY(posYD1);
-		//increase waves
 	}
 	TowD2.Move(-1, 0);
 	if (TowD2.GetX() <= -TowD2.GetWidth())
@@ -424,10 +440,10 @@ void Game::Draw()
 	Egg1.Move(-1, 0);
 	if (Egg1.GetX() <= -Egg1.GetWidth())
 	{
-		Egg1.SetX(1920 + (59 * 3)-50);
+		Egg1.SetX(1920 + (59 * 3) - 50);
 		Egg1.SetY(rand() % 300 + 200);
 		e1 = true;
-		e1prob = rand() % 2;
+		e1prob = rand() % 3;
 	}
 	Egg2.Move(-1, 0);
 	if (Egg2.GetX() <= -Egg2.GetWidth())
@@ -435,17 +451,16 @@ void Game::Draw()
 		Egg2.SetX(1920 + (59 * 3) - 50);
 		Egg2.SetY(rand() % 300 + 200);
 		e2 = true;
-		e2prob = rand() % 3;
+		e2prob = rand() % 2;
 	}
 	Egg3.Move(-1, 0);
 	if (Egg3.GetX() <= -Egg3.GetWidth())
 	{
-		Egg3.SetX(1920 + (59 * 3)-50);
+		Egg3.SetX(1920 + (59 * 3) - 50);
 		Egg3.SetY(rand() % 300 + 200);
 		e3 = true;
 		e3prob = rand() % 4;
 	}
-
 	
 	SDL_Rect rc;
 	SDL_Rect pl;
@@ -493,7 +508,7 @@ void Game::Draw()
 	TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
 	SDL_RenderCopy(Renderer, towu, NULL, &u3);
 
-	if (e1 && e1prob == 1)
+	if (e1 && e1prob >= 1)
 	{
 		Egg1.GetRect(&re1.x, &re1.y, &re1.w, &re1.h);
 		SDL_RenderCopy(Renderer, egg1, NULL, &re1);
@@ -556,18 +571,21 @@ void Game::Draw()
 	if (collisionE1 && e1)
 	{
 		points += 100;
+		egg1count++;
 		e1 = false;
 	}
 	if (collisionE2 && e2)
 	{
 
 		points += 200;
+		egg2count++;
 		e2 = false;
 
 	}
 	if (collisionE3 && e3)
 	{
 		points += 300;
+		egg3count++;
 		e3 = false;
 	}
 	time3++;
@@ -578,7 +596,19 @@ void Game::Draw()
 	}
 
 	std::string s = "Score: " + std::to_string(points);
-	Text(s.c_str(), 20, 30, 49, 41, 54);
+	Text(s.c_str(), 40, 30, 255, 255, 255);
+	Text(std::to_string(egg1count).c_str(), 100, 100, 255, 255, 255);
+	Text(std::to_string(egg2count).c_str(), 100, 150, 255, 255, 255);
+	Text(std::to_string(egg3count).c_str(), 100, 200, 255, 255, 255);
+	SDL_Rect egc1;
+	SDL_Rect egc2;
+	SDL_Rect egc3;
+	Eggc1.GetRect(&egc1.x, &egc1.y, &egc1.w, &egc1.h);
+	Eggc2.GetRect(&egc2.x, &egc2.y, &egc2.w, &egc2.h);
+	Eggc3.GetRect(&egc3.x, &egc3.y, &egc3.w, &egc3.h);
+	SDL_RenderCopy(Renderer, egg1c, NULL, &egc1);
+	SDL_RenderCopy(Renderer, egg2c, NULL, &egc2);
+	SDL_RenderCopy(Renderer, egg3c, NULL, &egc3);
 
 	//Draw shots
 	/*for (int i = 0; i < MAX_SHOTS; ++i)
@@ -595,7 +625,6 @@ void Game::Draw()
 	{
 		play = true;
 	}
-
 
 	//Update screen
 	SDL_RenderPresent(Renderer);

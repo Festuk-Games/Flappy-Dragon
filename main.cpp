@@ -4,7 +4,6 @@
 int main(int argc, char* args[])
 {
 
-	
 	double first, last = 0;
 
 	Game game;
@@ -29,7 +28,7 @@ int main(int argc, char* args[])
 
 		if (game.gameReady)
 		{
-			game.temporizador();
+			game.timer();
 			game.play = false;
 			break;
 		}

@@ -43,7 +43,7 @@ void Player::Gravity()
 		accelerator2 += 0.035;
 		jumpHeight += gravity;
 		Ypos += gravity + accelerator1 + accelerator2 + jumpHeight;
-		setDest(200, Ypos, 60*3, 46 * 3);
+		setDest(220, Ypos, 60*3, 46 * 3);
 		if (jumpHeight > 0)
 		{
 			inJump = false;
@@ -55,7 +55,7 @@ void Player::Gravity()
 		accelerator1 += 0.035;
 		accelerator2 += 0.035;
 		Ypos += gravity + accelerator1 + accelerator2;
-		setDest(200, Ypos, 60*3, 46*3);
+		setDest(220, Ypos, 60*3, 46*3);
 	}
 }
 
