@@ -65,8 +65,13 @@ public:
 	int wave = 0;
 	int endwave = 0;
 	bool close = false;
-	bool coin1 = true;
-	int coin1prob = 0;
+
+	bool e1 = true;
+	int e1prob = 0;
+	bool e2 = true;
+	int e2prob = 0;
+	bool e3 = true;
+	int e3prob = 0;
 
 	void temporizador();
 
@@ -74,7 +79,7 @@ public:
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_shot, *background, *in, *menu, *endmenu, *tex, *towd, *towu, *coin, *reloj;
+	SDL_Texture *img_background, *img_shot, *background, *in, *menu, *endmenu, *tex, *towd, *towu, *egg1, *egg2, *egg3, *reloj;
 	
 	
 	int idx_shot;
@@ -87,7 +92,7 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Coin, Pause;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Egg1, Egg2, Egg3, Pause;
 
 	Audio audio;
 

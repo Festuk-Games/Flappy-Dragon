@@ -84,17 +84,21 @@ bool Game::Init()
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
 	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(towd, NULL, NULL, &w, NULL);
-	TowD1.Init(640, 700, 59 *3, 180*3, 4);
-	TowD2.Init(1280, 700, 59 * 3, 180 * 3, 4);
-	TowD3.Init(1920, 750, 59 * 3, 180 * 3, 4);
+	TowD1.Init(1920, 700, 59 *3, 180*3, 4);
+	TowD2.Init(2600, 700, 59 * 3, 180 * 3, 4);
+	TowD3.Init(3350, 750, 59 * 3, 180 * 3, 4);
 	SDL_QueryTexture(towu, NULL, NULL, &w, NULL);
-	TowU1.Init(640, -300, 59 * 3, 180 * 3, 4);
-	TowU2.Init(1280, -300, 59 * 3, 180 * 3, 4);
-	TowU3.Init(1920, -250, 59 * 3, 180 * 3, 4);
+	TowU1.Init(1920, -300, 59 * 3, 180 * 3, 4);
+	TowU2.Init(2600, -300, 59 * 3, 180 * 3, 4);
+	TowU3.Init(3350, -250, 59 * 3, 180 * 3, 4);
 	font = TTF_OpenFont("Fonts/PIXELADE.ttf", 50);
 
-	SDL_QueryTexture(coin, NULL, NULL, &w, NULL);
-	Coin.Init(1000, 400, 50, 50, 4);
+	SDL_QueryTexture(egg1, NULL, NULL, &w, NULL);
+	Egg1.Init(1000, 400, 50, 50, 4);
+	SDL_QueryTexture(egg2, NULL, NULL, &w, NULL);
+	Egg2.Init(1640, 400, 50, 50, 4);
+	SDL_QueryTexture(egg3, NULL, NULL, &w, NULL);
+	Egg3.Init(2280, 400, 50, 50, 4);
 
 	god_mode = false;
 	return true;
@@ -143,8 +147,18 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	coin = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
-	if (coin == NULL) {
+	egg1 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (egg1 == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	egg2 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (egg2 == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	egg3 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	if (egg3 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
@@ -166,7 +180,10 @@ void Game::Release()
 	SDL_DestroyTexture(img_shot);
 	SDL_DestroyTexture(towd);
 	SDL_DestroyTexture(towu);
-	SDL_DestroyTexture(coin);
+	SDL_DestroyTexture(egg1);
+	SDL_DestroyTexture(egg2);
+	SDL_DestroyTexture(egg3);
+	SDL_DestroyTexture(reloj);
 
 	TTF_Quit();
 	IMG_Quit();
@@ -258,9 +275,7 @@ bool Game::Update()
 	//	idx_shot %= MAX_SHOTS;
 	//}
 
-
 	return false;
-
 }
 
 
@@ -269,17 +284,13 @@ void Game::OpenIntro()
 {
 	SDL_Rect rc;
 	//Set the color used for drawing operations
-	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 0);
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
 	//Draw menu
-
 	time1++;
-	if (time1 >=100 && time1 <= 200)
-	{
-		Intro.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-		SDL_RenderCopy(Renderer, in, NULL, &rc);
-	}
+	Intro.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, in, NULL, &rc);
 	if (time1 >= 200)
 	{
 		intro = true;
@@ -314,13 +325,8 @@ void Game::OpenMenu()
 	//Clear rendering target
 	SDL_RenderClear(Renderer);
 	//Draw menu
-
-	time2++;
-	if (time2 >= 50)
-	{
-		Menu.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-		SDL_RenderCopy(Renderer, menu, NULL, &rc);
-	}
+	Menu.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, menu, NULL, &rc);
 	//Update screen
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
@@ -355,20 +361,15 @@ void Game::temporizador() {
 	SDL_RenderClear(Renderer);
 	//Draw menu
 
-	time2++;
-	if (time2 >= 50)
-	{
-		Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-		SDL_RenderCopy(Renderer, img_background, NULL, &rc);
-		Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-		SDL_RenderCopy(Renderer, reloj, NULL, &rc);
-		p.Render(Renderer);
+	Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
+	Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, reloj, NULL, &rc);
+	p.Render(Renderer);
 
-	}
 	//Update screen
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(3000);    // 1000/10 = 100 fps ma
-
 }
 
 
@@ -377,7 +378,6 @@ void Game::Draw()
 	p.Gravity();
 	Scene.Move(-1, 0);
 	if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);
-
 
 	TowD1.Move(-1, 0);
 	if (TowD1.GetX() <= -TowD1.GetWidth())
@@ -421,17 +421,32 @@ void Game::Draw()
 		TowU3.SetY(posYD3 - 950);
 	}
 
-	Coin.Move(-1, 0);
-	if (Coin.GetX() <= -Coin.GetWidth())
+	Egg1.Move(-1, 0);
+	if (Egg1.GetX() <= -Egg1.GetWidth())
 	{
-		Coin.SetX(1920 + (59 * 3)-50);
-		Coin.SetY(rand() % 300 + 200);
-		coin1 = true;
-		coin1prob = rand() % 3;
+		Egg1.SetX(1920 + (59 * 3)-50);
+		Egg1.SetY(rand() % 300 + 200);
+		e1 = true;
+		e1prob = rand() % 2;
+	}
+	Egg2.Move(-1, 0);
+	if (Egg2.GetX() <= -Egg2.GetWidth())
+	{
+		Egg2.SetX(1920 + (59 * 3) - 50);
+		Egg2.SetY(rand() % 300 + 200);
+		e2 = true;
+		e2prob = rand() % 3;
+	}
+	Egg3.Move(-1, 0);
+	if (Egg3.GetX() <= -Egg3.GetWidth())
+	{
+		Egg3.SetX(1920 + (59 * 3)-50);
+		Egg3.SetY(rand() % 300 + 200);
+		e3 = true;
+		e3prob = rand() % 4;
 	}
 
 	
-
 	SDL_Rect rc;
 	SDL_Rect pl;
 	SDL_Rect d1;
@@ -440,7 +455,9 @@ void Game::Draw()
 	SDL_Rect u1;
 	SDL_Rect u2;
 	SDL_Rect u3;
-	SDL_Rect co;
+	SDL_Rect re1;
+	SDL_Rect re2;
+	SDL_Rect re3;
 
 	for (int i = 0; i < MAX_SHOTS; ++i)
 	{
@@ -462,11 +479,6 @@ void Game::Draw()
 	rc.x += rc.w;
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 
-	/*if (TowD1.GetX() == 1920)
-	{
-		wave++;
-	}*/
-
 	TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
 	SDL_RenderCopy(Renderer, towd, NULL, &d1);
 	TowD2.GetRect(&d2.x, &d2.y, &d2.w, &d2.h);
@@ -481,10 +493,20 @@ void Game::Draw()
 	TowU3.GetRect(&u3.x, &u3.y, &u3.w, &u3.h);
 	SDL_RenderCopy(Renderer, towu, NULL, &u3);
 
-	if (coin1 && coin1prob == 1)
+	if (e1 && e1prob == 1)
 	{
-		Coin.GetRect(&co.x, &co.y, &co.w, &co.h);
-		SDL_RenderCopy(Renderer, coin, NULL, &co);
+		Egg1.GetRect(&re1.x, &re1.y, &re1.w, &re1.h);
+		SDL_RenderCopy(Renderer, egg1, NULL, &re1);
+	}
+	if (e2 && e2prob == 1)
+	{
+		Egg2.GetRect(&re2.x, &re2.y, &re2.w, &re2.h);
+		SDL_RenderCopy(Renderer, egg2, NULL, &re2);
+	}
+	if (e3 && e3prob == 1)
+	{
+		Egg3.GetRect(&re3.x, &re3.y, &re3.w, &re3.h);
+		SDL_RenderCopy(Renderer, egg3, NULL, &re3);
 	}
 
 	p.GetCollider(&pl.x, &pl.y, &pl.w, &pl.h);
@@ -508,16 +530,21 @@ void Game::Draw()
 		SDL_RenderDrawRect(Renderer, &u1);
 		SDL_RenderDrawRect(Renderer, &u2);
 		SDL_RenderDrawRect(Renderer, &u3);
-		SDL_RenderDrawRect(Renderer, &co);
+		SDL_RenderDrawRect(Renderer, &re1);
+		SDL_RenderDrawRect(Renderer, &re2);
+		SDL_RenderDrawRect(Renderer, &re3);
 	}
 
-	SDL_bool collisionCo = SDL_HasIntersection(&pl, &co);
+	SDL_bool collisionE1 = SDL_HasIntersection(&pl, &re1);
+	SDL_bool collisionE2 = SDL_HasIntersection(&pl, &re2);
+	SDL_bool collisionE3 = SDL_HasIntersection(&pl, &re3);
 	SDL_bool collisionD1 = SDL_HasIntersection(&pl, &d1);
 	SDL_bool collisionD2 = SDL_HasIntersection(&pl, &d2);
 	SDL_bool collisionD3 = SDL_HasIntersection(&pl, &d3);
 	SDL_bool collisionU1 = SDL_HasIntersection(&pl, &u1);
 	SDL_bool collisionU2 = SDL_HasIntersection(&pl, &u2);
 	SDL_bool collisionU3 = SDL_HasIntersection(&pl, &u3);
+
 	if (collisionD1 ||collisionD2 || collisionD3 || collisionU1 || collisionU2 || collisionU3)
 	{
 		if (!god_mode)
@@ -526,13 +553,22 @@ void Game::Draw()
 		}
 	/*	play = true;*/
 	}
-	if (collisionCo)
+	if (collisionE1 && e1)
 	{
-		if (coin1)
-		{
-			points += 100;
-			coin1 = false;
-		}
+		points += 100;
+		e1 = false;
+	}
+	if (collisionE2 && e2)
+	{
+
+		points += 200;
+		e2 = false;
+
+	}
+	if (collisionE3 && e3)
+	{
+		points += 300;
+		e3 = false;
 	}
 	time3++;
 	if (time3 >= 50)
@@ -543,7 +579,6 @@ void Game::Draw()
 
 	std::string s = "Score: " + std::to_string(points);
 	Text(s.c_str(), 20, 30, 49, 41, 54);
-
 
 	//Draw shots
 	/*for (int i = 0; i < MAX_SHOTS; ++i)

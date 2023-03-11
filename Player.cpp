@@ -95,7 +95,6 @@ bool Player::JumpState()
 	return inJump;
 }
 
-
 void Player::CreateTexture1(const char* address, SDL_Renderer* ren)
 {
 	Tex1 = TextureManager::Texture(address, ren);
