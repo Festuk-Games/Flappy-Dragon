@@ -21,6 +21,10 @@ int main(int argc, char* args[])
 		}
 
 	}
+	if (!game.gameReady)
+	{
+		game.playMusicMenu();
+	}
 	while (!game.gameReady)
 	{
 		game.gameReady = game.Update();
@@ -68,7 +72,6 @@ int main(int argc, char* args[])
 		}
 	}
 
-	
 	game.Release();
 	return 0;
 }

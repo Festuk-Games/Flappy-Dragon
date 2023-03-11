@@ -77,6 +77,9 @@ public:
 	int egg2count = 0;
 	int egg3count = 0;
 
+	unsigned int buttonFX;
+	unsigned int eggFX;
+
 	void timer();
 
 private:

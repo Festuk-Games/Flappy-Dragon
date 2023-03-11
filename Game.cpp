@@ -49,15 +49,17 @@ bool Game::Init()
 	{
 		GameState = true;
 	/*	Pipe.CreateTexture("spaceship.png", Renderer);*/
-		p.CreateTexture("dragon1.png", Renderer);
-		p.CreateTexture1("dragon2.png", Renderer);
-		p.CreateTexture2("dragon3.png", Renderer);
-		p.CreateTexture3("dragon4.png", Renderer);
-		shot.CreateTexture("shot.png", Renderer);
+		p.CreateTexture("Images/dragon1.png", Renderer);
+		p.CreateTexture1("Images/dragon2.png", Renderer);
+		p.CreateTexture2("Images/dragon3.png", Renderer);
+		p.CreateTexture3("Images/dragon4.png", Renderer);
+	/*	shot.CreateTexture("Images/shot.png", Renderer);*/
 	}
 
 	//initialize music
 	audio.Init();
+	buttonFX = audio.LoadFx("Audio/button.wav");
+	eggFX = audio.LoadFx("Audio/egg.wav");
 	//play music
 
 	//Initialize keys array
@@ -119,32 +121,32 @@ bool Game::LoadImages()
 		SDL_Log("IMG_Init, failed to init required png support: %s\n", IMG_GetError());
 		return false;
 	}
-	menu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("menu.png"));
+	menu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/menu.png"));
 	if (menu == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	in = SDL_CreateTextureFromSurface(Renderer, IMG_Load("logo.png"));
+	in = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/logo.png"));
 	if (in == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	endmenu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("end.png"));
+	endmenu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/end.png"));
 	if (endmenu == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("fondo.png"));
+	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/fondo.png"));
 	if (img_background == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	towd = SDL_CreateTextureFromSurface(Renderer, IMG_Load("towerd.png"));
+	towd = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/towerd.png"));
 	if (towd == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	towu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("toweru.png"));
+	towu = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/toweru.png"));
 	if (towu == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
@@ -154,37 +156,37 @@ bool Game::LoadImages()
 	//	SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 	//	return false;
 	//}
-	egg1 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	egg1 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (egg1 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg2 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	egg2 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (egg2 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg3 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	egg3 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (egg3 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg1c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	egg1c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (egg1c == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg2c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	egg2c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (egg2c == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg3c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	egg3c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (egg3c == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	pause = SDL_CreateTextureFromSurface(Renderer, IMG_Load("coin.png"));
+	pause = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (pause == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
@@ -315,23 +317,20 @@ void Game::OpenIntro()
 	//Update screen
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
-	SDL_Event mouse;
-	SDL_PollEvent(&mouse);
 
 }
-
 
 void Game::playMusicMenu()
 {
-	audio.PlayMusic("gamemus.ogg", 2.0f);
+	audio.PlayMusic("Audio/menu.ogg", 2.0f);
 }
 void Game::playMusicGame()
 {
-	audio.PlayMusic("gamemus.ogg", 2.0f);
+	audio.PlayMusic("Audio/gamemus.ogg", 2.0f);
 }
 void Game::playMusicEnd()
 {
-	audio.PlayMusic("", 1.0f);
+	audio.PlayMusic("Audio/end.ogg", 1.0f);
 }
 
 void Game::OpenMenu()
@@ -354,6 +353,7 @@ void Game::OpenMenu()
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		if (x >= 144*6 && x <= 174*6 && y >= 107*6 && y <= 120*6) {
+			audio.PlayFx(buttonFX);
 			gameReady = true;
 		}
 	}
@@ -570,13 +570,14 @@ void Game::Draw()
 	}
 	if (collisionE1 && e1)
 	{
+		audio.PlayFx(eggFX);
 		points += 100;
 		egg1count++;
 		e1 = false;
 	}
 	if (collisionE2 && e2)
 	{
-
+		audio.PlayFx(eggFX);
 		points += 200;
 		egg2count++;
 		e2 = false;
@@ -584,6 +585,7 @@ void Game::Draw()
 	}
 	if (collisionE3 && e3)
 	{
+		audio.PlayFx(eggFX);
 		points += 300;
 		egg3count++;
 		e3 = false;
@@ -654,6 +656,7 @@ void Game::OpenEnd()
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		if (x >= 144*6 && x <= 174*6 && y >= 116*6 && y <= 144*6) {
+			audio.PlayFx(buttonFX);
 			end = true;
 		}
 	}

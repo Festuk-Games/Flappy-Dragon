@@ -94,3 +94,70 @@ bool Audio::PlayMusic(const char* path, float fade_time)
 	SDL_Log("Successfully playing %s", path);
 	return ret;
 }
+
+bool Audio::CleanUp()
+{
+	SDL_Log("Freeing sound FX, closing Mixer and Audio subsystem");
+
+	if (music != NULL)
+	{
+		Mix_FreeMusic(music);
+	}
+
+	for (int i = 0; i < MAX_FX; ++i)
+		if (fx[i] != nullptr)
+			Mix_FreeChunk(fx[i]);
+
+	Mix_CloseAudio();
+	Mix_Quit();
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	return true;
+}
+
+// Load WAV
+int Audio::LoadFx(const char* path)
+{
+	int ret = 0;
+	Mix_Chunk* chunk = Mix_LoadWAV(path);
+
+	if (chunk == nullptr)
+	{
+		SDL_Log("Cannot load wav %s. Mix_GetError(): %s", path, Mix_GetError());
+	}
+	else
+	{
+		fx[last_fx] = chunk;
+		ret = last_fx++;
+	}
+
+	return ret;
+}
+
+// UnLoad WAV
+bool Audio::UnLoadFx(int id)
+{
+	bool ret = false;
+
+	if (fx[id] != nullptr)
+	{
+		Mix_FreeChunk(fx[id]);
+		fx[id] = nullptr;
+		ret = true;
+	}
+
+	return ret;
+}
+
+// Play WAV
+bool Audio::PlayFx(unsigned int id, int repeat)
+{
+	bool ret = false;
+
+	if (fx[id] != nullptr)
+	{
+		Mix_PlayChannel(-1, fx[id], repeat);
+		ret = true;
+	}
+
+	return ret;
+}
