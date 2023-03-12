@@ -17,7 +17,7 @@ Game::Game() {
 	p.setSource(0,0,60*3,46*3);
 	//Pipe.setSource(0, 0, 217, 218);
 	//destination dimension
-	p.setDest(100, 200, 60*3, 46*3);
+	p.setDest(220, 256, 60*3, 46*3);
 	//Pipe.setDest(100, 200, 400, 400);
 	srand(time(NULL));
 
@@ -75,8 +75,12 @@ bool Game::Init()
 	/*Player.Init(20, WINDOW_HEIGHT >> 1, 104, 82, 5);*/
 	idx_shot = 0;
 	int w;
-	SDL_QueryTexture(pause, NULL, NULL, &w, NULL);
-	Pause.Init(0, 0, 400, 400, 4);
+	SDL_QueryTexture(num1, NULL, NULL, &w, NULL);
+	Num1.Init(1650/2 -100, 400, 22*6, 32*6, 4);
+	SDL_QueryTexture(num2, NULL, NULL, &w, NULL);
+	Num2.Init(1650 / 2 -100, 400, 22 * 6, 32 * 6, 4);
+	SDL_QueryTexture(num3, NULL, NULL, &w, NULL);
+	Num3.Init(1650 / 2 -100, 400, 22 * 6, 32 * 6, 4);
 	SDL_QueryTexture(in, NULL, NULL, &w, NULL);
 	Intro.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(menu, NULL, NULL, &w, NULL);
@@ -84,7 +88,7 @@ bool Game::Init()
 	SDL_QueryTexture(endmenu, NULL, NULL, &w, NULL);
 	EndMenu.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
-	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
+	Scene.Init(0, 0, WINDOW_WIDTH*2, WINDOW_HEIGHT, 4);
 	//SDL_QueryTexture(clouds, NULL, NULL, &w, NULL);
 	//Clouds.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(towd, NULL, NULL, &w, NULL);
@@ -98,25 +102,25 @@ bool Game::Init()
 	font = TTF_OpenFont("Fonts/PIXELADE.ttf", 50);
 
 	SDL_QueryTexture(egg1, NULL, NULL, &w, NULL);
-	Egg1.Init(1000, 400, 50, 50, 4);
+	Egg1.Init(1000, 400, 46, 50, 4);
 	SDL_QueryTexture(egg2, NULL, NULL, &w, NULL);
-	Egg2.Init(1640, 400, 50, 50, 4);
+	Egg2.Init(1700, 400, 46, 50, 4);
 	SDL_QueryTexture(egg3, NULL, NULL, &w, NULL);
-	Egg3.Init(2280, 400, 50, 50, 4);
+	Egg3.Init(2400, 400, 46, 50, 4);
 
 	SDL_QueryTexture(egg1c, NULL, NULL, &w, NULL);
-	Eggc1.Init(40, 105, 40, 40, 4);
+	Eggc1.Init(40, 105, 36, 40, 4);
 	SDL_QueryTexture(egg2c, NULL, NULL, &w, NULL);
-	Eggc2.Init(40, 155, 40, 40, 4);
+	Eggc2.Init(40, 155, 36, 40, 4);
 	SDL_QueryTexture(egg3c, NULL, NULL, &w, NULL);
-	Eggc3.Init(40, 205, 40, 40, 4);
+	Eggc3.Init(40, 205, 36, 40, 4);
 
 	SDL_QueryTexture(egg1cend, NULL, NULL, &w, NULL);
-	Eggc1end.Init(880, 680, 40, 40, 4);
+	Eggc1end.Init(880 - 100, 680, 36, 40, 4);
 	SDL_QueryTexture(egg2cend, NULL, NULL, &w, NULL);
-	Eggc2end.Init(880, 730, 40, 40, 4);
+	Eggc2end.Init(880 - 100, 730, 36, 40, 4);
 	SDL_QueryTexture(egg3cend, NULL, NULL, &w, NULL);
-	Eggc3end.Init(880, 780, 40, 40, 4);
+	Eggc3end.Init(880 - 100, 780, 36, 40, 4);
 
 	god_mode = false;
 	return true;
@@ -145,7 +149,7 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/fondo1.png"));
+	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/fondo.png"));
 	if (img_background == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
@@ -170,53 +174,63 @@ bool Game::LoadImages()
 	//	SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 	//	return false;
 	//}
-	egg1 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg1 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg1.png"));
 	if (egg1 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg2 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg2 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg2.png"));
 	if (egg2 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg3 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg3 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg3.png"));
 	if (egg3 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg1c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg1c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg1.png"));
 	if (egg1c == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg2c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg2c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg2.png"));
 	if (egg2c == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg3c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg3c = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg3.png"));
 	if (egg3c == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg1cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg1cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg1.png"));
 	if (egg1cend == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg2cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg2cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg2.png"));
 	if (egg2cend == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	egg3cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	egg3cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/egg3.png"));
 	if (egg3cend == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	pause = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
-	if (pause == NULL) {
+	num1 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/1.png"));
+	if (num1 == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	num2 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/2.png"));
+	if (num2 == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	num3 = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/3.png"));
+	if (num3 == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
@@ -242,7 +256,9 @@ void Game::Release()
 	SDL_DestroyTexture(egg1cend);
 	SDL_DestroyTexture(egg2cend);
 	SDL_DestroyTexture(egg3cend);
-	SDL_DestroyTexture(pause);
+	SDL_DestroyTexture(num1);
+	SDL_DestroyTexture(num2);
+	SDL_DestroyTexture(num3);
 	SDL_DestroyTexture(clouds);
 
 	TTF_Quit();
@@ -343,7 +359,7 @@ void Game::OpenIntro()
 	time1++;
 	Intro.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
 	SDL_RenderCopy(Renderer, in, NULL, &rc);
-	if (time1 >= 200)
+	if (time1 >= 100)
 	{
 		intro = true;
 	}
@@ -363,7 +379,7 @@ void Game::playMusicGame()
 }
 void Game::playMusicEnd()
 {
-	audio.PlayMusic("Audio/end.ogg", 1.0f);
+	audio.PlayMusic("Audio/end.ogg", 2.0f);
 }
 
 void Game::OpenMenu()
@@ -385,12 +401,13 @@ void Game::OpenMenu()
 	{
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		if (x >= 144*6 && x <= 174*6 && y >= 107*6 && y <= 120*6) {
+		if (x >= 144*6 - 124 && x <= 174*6 - 124 && y >= 107*6 -20&& y <= 120*6 - 20) {
 			audio.PlayFx(buttonFX);
-			gameReady = true;
+			timerReady = true;
 		}
-		else if (x >= 144 * 6 && x <= 174 * 6 && y >= 133 * 6 && y <= 146 * 6) {
+		else if (x >= 144 * 6 - 124 && x <= 174 * 6 - 124 && y >= 133 * 6 - 20 && y <= 146 * 6 - 20) {
 			audio.PlayFx(buttonFX);
+			SDL_Delay(500);
 			close = true;
 		}
 	}
@@ -408,25 +425,47 @@ bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
 }
 
 void Game::timer() {
-	//SDL_Rect rc;
-	//SDL_Rect cl;
-	////Set the color used for drawing operations
-	//SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
-	////Clear rendering target
-	//SDL_RenderClear(Renderer);
-	////Draw menu
+	SDL_Rect n1;
+	SDL_Rect n2;
+	SDL_Rect n3;
+	SDL_Rect rc;
+	//Set the color used for drawing operations
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	//Clear rendering target
+	SDL_RenderClear(Renderer);
+	//Draw menu
 
-	//Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	//SDL_RenderCopy(Renderer, img_background, NULL, &rc);
-	///*Clouds.GetRect(&cl.x, &cl.y, &cl.w, &cl.h);
-	//SDL_RenderCopy(Renderer, img_background, NULL, &rc);*/
-	////Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	////SDL_RenderCopy(Renderer, pause, NULL, &rc);
-	///*p.Render(Renderer);*/
+	Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
+	p.Render(Renderer);
+	if (num03)
+	{
+		audio.PlayFx(buttonFX);
+		Num3.GetRect(&n3.x, &n3.y, &n3.w, &n3.h);
+		SDL_RenderCopy(Renderer, num3, NULL, &n3);
+		num02 = true;
+		num03 = false;
+	}
+	else if (num02)
+	{
+		audio.PlayFx(buttonFX);
+		Num2.GetRect(&n2.x, &n2.y, &n2.w, &n2.h);
+		SDL_RenderCopy(Renderer, num2, NULL, &n2);
+		num01 = true;
+		num02 = false;
+	}
+	else if (num01)
+	{
+		audio.PlayFx(buttonFX);
+		Num1.GetRect(&n1.x, &n1.y, &n1.w, &n1.h);
+		SDL_RenderCopy(Renderer, num1, NULL, &n1);
+		play = false;
+		num01 = false;
+	}
 
-	////Update screen
-	//SDL_RenderPresent(Renderer);
-	//SDL_Delay(1000);    // 1000/10 = 100 fps ma
+	//Update screen
+	SDL_RenderPresent(Renderer);
+	SDL_Delay(1000);    // 1000/10 = 100 fps ma
 }
 
 
@@ -693,10 +732,10 @@ void Game::OpenEnd()
 	SDL_RenderCopy(Renderer, endmenu, NULL, &rc);
 	//Update screen
 	std::string s = "Score: " + std::to_string(points);
-	Text(s.c_str(), 850, 600, 205, 146, 44);
-	Text(std::to_string(egg1count).c_str(), 950, 675, 255, 255, 255);
-	Text(std::to_string(egg2count).c_str(), 950, 725, 255, 255, 255);
-	Text(std::to_string(egg3count).c_str(), 950, 775, 255, 255, 255);
+	Text(s.c_str(), 850-100, 600, 205, 146, 44);
+	Text(std::to_string(egg1count).c_str(), 950 - 100, 675, 255, 255, 255);
+	Text(std::to_string(egg2count).c_str(), 950 - 100, 725, 255, 255, 255);
+	Text(std::to_string(egg3count).c_str(), 950 - 100, 775, 255, 255, 255);
 
 	SDL_Rect egc1end;
 	SDL_Rect egc2end;
@@ -717,8 +756,9 @@ void Game::OpenEnd()
 	{
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		if (x >= 144*6 && x <= 174*6 && y >= 147*6 && y <= 160*6) {
+		if (x >= 144*6 -124&& x <= 174*6 -124&& y >= 147*6 -20&& y <= 160*6-20) {
 			audio.PlayFx(buttonFX);
+			SDL_Delay(500);
 			end = true;
 		}
 	}

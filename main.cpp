@@ -7,6 +7,8 @@ int main(int argc, char* args[])
 	double first, last = 0;
 
 	Game game;
+	Audio audio;
+
 	if (!game.Init()) return -1;
 
 	while (!game.intro)
@@ -19,11 +21,6 @@ int main(int argc, char* args[])
 			game.gameReady = false;
 			break;
 		}
-		if (game.close)
-		{
-			game.Release();
-			return 0;
-		}
 
 	}
 	if (!game.gameReady)
@@ -34,19 +31,36 @@ int main(int argc, char* args[])
 	{
 		game.gameReady = game.Update();
 		game.OpenMenu();
-
+		
+		if (game.timerReady)
+		{
+			game.playMusicGame();
+			break;
+		}
 		if (game.gameReady)
 		{
-			game.timer();
 			game.play = false;
 			break;
 		}
+		else if (game.close)
+		{
+			game.Release();
+			return 0;
+		}
 
 	}
-	if (!game.play)
+	while (game.timerReady)
 	{
-		game.playMusicGame();
+		game.timer();
+		if (!game.play)
+		{
+			break;
+		}
 	}
+	//if (!game.play)
+	//{
+	//	game.playMusicGame();
+	//}
 	while (!game.play)
 	{
 		game.play = game.Update();

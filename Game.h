@@ -19,8 +19,8 @@
 #include"Object.h"
 #include "Audio.h"
 
-#define WINDOW_WIDTH	1920
-#define WINDOW_HEIGHT	1080
+#define WINDOW_WIDTH	1680
+#define WINDOW_HEIGHT	1050
 #define MAX_KEYS		256
 #define MAX_SHOTS		32
 
@@ -48,7 +48,9 @@ public:
 	void OpenIntro();
 	void OpenMenu();
 	void OpenEnd();
+	bool timerReady = false;
 	bool intro = false;
+	bool close = false;
 	bool end = true;
 	bool gameReady = true; 
 	bool play = true;
@@ -64,7 +66,6 @@ public:
 
 	int wave = 0;
 	int endwave = 0;
-	bool close = false;
 
 	bool e1 = true;
 	int e1prob = 0;
@@ -77,6 +78,10 @@ public:
 	int egg2count = 0;
 	int egg3count = 0;
 
+	bool num01 = false;
+	bool num02 = false;
+	bool num03 = true;
+
 	unsigned int buttonFX;
 	unsigned int eggFX;
 
@@ -85,7 +90,7 @@ public:
 private:
 	SDL_Window *Window;
 	SDL_Renderer *Renderer;
-	SDL_Texture *img_background, *img_shot, *background, *in, *menu, *endmenu, *tex, *towd, *towu, *egg1, *egg2, *egg3, *pause, * egg1c, * egg2c, * egg3c, *clouds, * egg1cend, * egg2cend, * egg3cend;
+	SDL_Texture *img_background, *img_shot, *background, *in, *menu, *endmenu, *tex, *towd, *towu, *egg1, *egg2, *egg3, *num1, * num2, * num3, * egg1c, * egg2c, * egg3c, *clouds, * egg1cend, * egg2cend, * egg3cend;
 	
 	int idx_shot;
 
@@ -97,7 +102,7 @@ private:
 	Player p, shot;
 	bool GameState;
 
-	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Egg1, Egg2, Egg3, Pause, Eggc1, Eggc2, Eggc3, Clouds, Eggc1end, Eggc2end, Eggc3end;
+	Entity Player, Shots[MAX_SHOTS], Scene, Menu, EndMenu, TowD1, TowD2, TowD3, TowU1, TowU2, TowU3, Intro, Egg1, Egg2, Egg3, Num1, Num2, Num3, Eggc1, Eggc2, Eggc3, Clouds, Eggc1end, Eggc2end, Eggc3end;
 
 	Audio audio;
 
