@@ -32,7 +32,7 @@ bool Game::Init()
 		return false;
 	}
 	//Create our window: title, x, y, w, h, flags
-	Window = SDL_CreateWindow("Flappy Dragon", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	Window = SDL_CreateWindow("Flappy Dragon - Festuk Games", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
 	if (Window == NULL)
 	{
 		SDL_Log("Unable to create window: %s", SDL_GetError());
