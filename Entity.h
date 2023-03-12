@@ -14,11 +14,13 @@ public:
 	void ShutDown(); 
 	bool IsAlive();
 	void Move(int dx, int dy);
+	void MoveC(int dx, int dy);
 
 private:
 	int x, y;
 	int width, height;
-	int speed;
+	int speed = 1;
+	int speedc = 1;
 	bool is_alive;
 };
 

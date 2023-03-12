@@ -84,7 +84,9 @@ bool Game::Init()
 	SDL_QueryTexture(endmenu, NULL, NULL, &w, NULL);
 	EndMenu.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
-	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
+	Scene.Init(0, 0, WINDOW_WIDTH*2, WINDOW_HEIGHT, 4);
+	SDL_QueryTexture(clouds, NULL, NULL, &w, NULL);
+	Clouds.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(towd, NULL, NULL, &w, NULL);
 	TowD1.Init(1920, 700, 59 *3, 180*3, 4);
 	TowD2.Init(2600, 700, 59 * 3, 180 * 3, 4);
@@ -151,6 +153,11 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
+	clouds = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/nubes.png"));
+	if (clouds == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
 	//img_shot = SDL_CreateTextureFromSurface(Renderer, IMG_Load("shot.png"));
 	//if (img_shot == NULL) {
 	//	SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
@@ -211,6 +218,7 @@ void Game::Release()
 	SDL_DestroyTexture(egg2c);
 	SDL_DestroyTexture(egg3c);
 	SDL_DestroyTexture(pause);
+	SDL_DestroyTexture(clouds);
 
 	TTF_Quit();
 	IMG_Quit();
@@ -372,6 +380,7 @@ bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
 
 void Game::timer() {
 	SDL_Rect rc;
+	SDL_Rect cl;
 	//Set the color used for drawing operations
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	//Clear rendering target
@@ -380,13 +389,15 @@ void Game::timer() {
 
 	Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
-	Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	SDL_RenderCopy(Renderer, pause, NULL, &rc);
-	p.Render(Renderer);
+	Clouds.GetRect(&cl.x, &cl.y, &cl.w, &cl.h);
+	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
+	//Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	//SDL_RenderCopy(Renderer, pause, NULL, &rc);
+	/*p.Render(Renderer);*/
 
 	//Update screen
 	SDL_RenderPresent(Renderer);
-	SDL_Delay(3000);    // 1000/10 = 100 fps ma
+	SDL_Delay(1000);    // 1000/10 = 100 fps ma
 }
 
 
@@ -395,6 +406,8 @@ void Game::Draw()
 	p.Gravity();
 	Scene.Move(-1, 0);
 	if (Scene.GetX() <= -Scene.GetWidth())	Scene.SetX(0);
+	Clouds.MoveC(-1, 0);
+	if (Clouds.GetX() <= -Clouds.GetWidth())	Clouds.SetX(0);
 
 	TowD1.Move(-1, 0);
 	if (TowD1.GetX() <= -TowD1.GetWidth())
@@ -463,6 +476,7 @@ void Game::Draw()
 	}
 	
 	SDL_Rect rc;
+	SDL_Rect cl;
 	SDL_Rect pl;
 	SDL_Rect d1;
 	SDL_Rect d2;
@@ -493,6 +507,11 @@ void Game::Draw()
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
 	rc.x += rc.w;
 	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
+
+	Clouds.GetRect(&cl.x, &cl.y, &cl.w, &cl.h);
+	SDL_RenderCopy(Renderer, clouds, NULL, &cl);
+	cl.x += cl.w;
+	SDL_RenderCopy(Renderer, clouds, NULL, &cl);
 
 	TowD1.GetRect(&d1.x, &d1.y, &d1.w, &d1.h);
 	SDL_RenderCopy(Renderer, towd, NULL, &d1);

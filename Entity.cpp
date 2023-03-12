@@ -54,3 +54,8 @@ void Entity::Move(int dx, int dy)
 	x += dx * speed;
 	y += dy * speed;
 }
+void Entity::MoveC(int dx, int dy)
+{
+	x += dx * speedc;
+	y += dy * speedc;
+}
