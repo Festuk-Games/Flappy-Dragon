@@ -84,9 +84,9 @@ bool Game::Init()
 	SDL_QueryTexture(endmenu, NULL, NULL, &w, NULL);
 	EndMenu.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(img_background, NULL, NULL, &w, NULL);
-	Scene.Init(0, 0, WINDOW_WIDTH*2, WINDOW_HEIGHT, 4);
-	SDL_QueryTexture(clouds, NULL, NULL, &w, NULL);
-	Clouds.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
+	Scene.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
+	//SDL_QueryTexture(clouds, NULL, NULL, &w, NULL);
+	//Clouds.Init(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 	SDL_QueryTexture(towd, NULL, NULL, &w, NULL);
 	TowD1.Init(1920, 700, 59 *3, 180*3, 4);
 	TowD2.Init(2600, 700, 59 * 3, 180 * 3, 4);
@@ -110,6 +110,13 @@ bool Game::Init()
 	Eggc2.Init(40, 155, 40, 40, 4);
 	SDL_QueryTexture(egg3c, NULL, NULL, &w, NULL);
 	Eggc3.Init(40, 205, 40, 40, 4);
+
+	SDL_QueryTexture(egg1cend, NULL, NULL, &w, NULL);
+	Eggc1end.Init(880, 680, 40, 40, 4);
+	SDL_QueryTexture(egg2cend, NULL, NULL, &w, NULL);
+	Eggc2end.Init(880, 730, 40, 40, 4);
+	SDL_QueryTexture(egg3cend, NULL, NULL, &w, NULL);
+	Eggc3end.Init(880, 780, 40, 40, 4);
 
 	god_mode = false;
 	return true;
@@ -138,7 +145,7 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
-	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/fondo.png"));
+	img_background = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/fondo1.png"));
 	if (img_background == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
@@ -193,6 +200,21 @@ bool Game::LoadImages()
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
 		return false;
 	}
+	egg1cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	if (egg1cend == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	egg2cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	if (egg2cend == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
+	egg3cend = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
+	if (egg3cend == NULL) {
+		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
+		return false;
+	}
 	pause = SDL_CreateTextureFromSurface(Renderer, IMG_Load("Images/coin.png"));
 	if (pause == NULL) {
 		SDL_Log("CreateTextureFromSurface failed: %s\n", SDL_GetError());
@@ -217,6 +239,9 @@ void Game::Release()
 	SDL_DestroyTexture(egg1c);
 	SDL_DestroyTexture(egg2c);
 	SDL_DestroyTexture(egg3c);
+	SDL_DestroyTexture(egg1cend);
+	SDL_DestroyTexture(egg2cend);
+	SDL_DestroyTexture(egg3cend);
 	SDL_DestroyTexture(pause);
 	SDL_DestroyTexture(clouds);
 
@@ -364,6 +389,10 @@ void Game::OpenMenu()
 			audio.PlayFx(buttonFX);
 			gameReady = true;
 		}
+		else if (x >= 144 * 6 && x <= 174 * 6 && y >= 133 * 6 && y <= 146 * 6) {
+			audio.PlayFx(buttonFX);
+			close = true;
+		}
 	}
 }
 
@@ -379,25 +408,25 @@ bool Game::CheckCollision(SDL_Rect* A, SDL_Rect* B)
 }
 
 void Game::timer() {
-	SDL_Rect rc;
-	SDL_Rect cl;
-	//Set the color used for drawing operations
-	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
-	//Clear rendering target
-	SDL_RenderClear(Renderer);
-	//Draw menu
+	//SDL_Rect rc;
+	//SDL_Rect cl;
+	////Set the color used for drawing operations
+	//SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	////Clear rendering target
+	//SDL_RenderClear(Renderer);
+	////Draw menu
 
-	Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
-	Clouds.GetRect(&cl.x, &cl.y, &cl.w, &cl.h);
-	SDL_RenderCopy(Renderer, img_background, NULL, &rc);
-	//Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
-	//SDL_RenderCopy(Renderer, pause, NULL, &rc);
-	/*p.Render(Renderer);*/
+	//Scene.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	//SDL_RenderCopy(Renderer, img_background, NULL, &rc);
+	///*Clouds.GetRect(&cl.x, &cl.y, &cl.w, &cl.h);
+	//SDL_RenderCopy(Renderer, img_background, NULL, &rc);*/
+	////Pause.GetRect(&rc.x, &rc.y, &rc.w, &rc.h);
+	////SDL_RenderCopy(Renderer, pause, NULL, &rc);
+	///*p.Render(Renderer);*/
 
-	//Update screen
-	SDL_RenderPresent(Renderer);
-	SDL_Delay(1000);    // 1000/10 = 100 fps ma
+	////Update screen
+	//SDL_RenderPresent(Renderer);
+	//SDL_Delay(1000);    // 1000/10 = 100 fps ma
 }
 
 
@@ -665,6 +694,20 @@ void Game::OpenEnd()
 	//Update screen
 	std::string s = "Score: " + std::to_string(points);
 	Text(s.c_str(), 850, 600, 205, 146, 44);
+	Text(std::to_string(egg1count).c_str(), 950, 675, 255, 255, 255);
+	Text(std::to_string(egg2count).c_str(), 950, 725, 255, 255, 255);
+	Text(std::to_string(egg3count).c_str(), 950, 775, 255, 255, 255);
+
+	SDL_Rect egc1end;
+	SDL_Rect egc2end;
+	SDL_Rect egc3end;
+	Eggc1end.GetRect(&egc1end.x, &egc1end.y, &egc1end.w, &egc1end.h);
+	Eggc2end.GetRect(&egc2end.x, &egc2end.y, &egc2end.w, &egc2end.h);
+	Eggc3end.GetRect(&egc3end.x, &egc3end.y, &egc3end.w, &egc3end.h);
+	SDL_RenderCopy(Renderer, egg1cend, NULL, &egc1end);
+	SDL_RenderCopy(Renderer, egg2cend, NULL, &egc2end);
+	SDL_RenderCopy(Renderer, egg3cend, NULL, &egc3end);
+
 	SDL_RenderPresent(Renderer);
 	SDL_Delay(10);	// 1000/10 = 100 fps max
 
@@ -674,7 +717,7 @@ void Game::OpenEnd()
 	{
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		if (x >= 144*6 && x <= 174*6 && y >= 116*6 && y <= 144*6) {
+		if (x >= 144*6 && x <= 174*6 && y >= 147*6 && y <= 160*6) {
 			audio.PlayFx(buttonFX);
 			end = true;
 		}

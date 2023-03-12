@@ -19,6 +19,11 @@ int main(int argc, char* args[])
 			game.gameReady = false;
 			break;
 		}
+		if (game.close)
+		{
+			game.Release();
+			return 0;
+		}
 
 	}
 	if (!game.gameReady)
